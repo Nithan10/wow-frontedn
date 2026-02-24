@@ -6,7 +6,7 @@ import { CarFront, ArrowRight, Trophy, Loader2 } from 'lucide-react';
 import axios from 'axios';
 
 // API Configuration
-const API_URL = process.env.NEXT_PUBLIC_API_URL || '"https://wow-lifebackend.onrender.com/api"/api';
+const API_URL = "https://wow-lifebackend.onrender.com/api";
 
 interface BrandLogo {
   name: string;
