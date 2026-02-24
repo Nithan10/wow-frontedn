@@ -7,7 +7,7 @@ import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import BentoGridSection, { BentoItemType } from '../../components-sections/BentoGridSection'; 
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const API_URL = "https://wow-lifebackend.onrender.com/api";
 
 const axiosInstance = axios.create({
   baseURL: API_URL,

@@ -7,7 +7,7 @@ import axios from 'axios';
 // Updated import path to match your structure
 import ShopByCategorySection, { CategoryItem } from '../../components-sections/ShopByCategorySection'; 
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const API_URL = "https://wow-lifebackend.onrender.com/api";
 
 const axiosInstance = axios.create({
   baseURL: API_URL,

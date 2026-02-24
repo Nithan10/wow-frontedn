@@ -21,7 +21,7 @@ const CharacterSlider = memo(({ theme }: { theme: 'dark' | 'light' }) => {
   useEffect(() => {
     const fetchCharacters = async () => {
       try {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+        const API_URL = "https://wow-lifebackend.onrender.com/api";
         const response = await fetch(`${API_URL}/characters`);
         const result = await response.json();
         

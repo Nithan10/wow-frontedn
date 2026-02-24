@@ -52,7 +52,7 @@ export default function ToyBlogLifestyle({ isPreview = false, previewData = null
 
     const fetchData = async () => {
       try {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+        const API_URL = "https://wow-lifebackend.onrender.com/api";
         const response = await fetch(`${API_URL}/blog-lifestyle`);
         const result = await response.json();
         if (result.success && result.data) setData(result.data);

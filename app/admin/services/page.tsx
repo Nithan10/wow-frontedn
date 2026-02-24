@@ -7,7 +7,7 @@ import Layout from '../layout/layout';
 import axios from 'axios';
 import ServicesPage from '../../../app/services/page';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const API_URL = "https://wow-lifebackend.onrender.com/api";
 const axiosInstance = axios.create({ baseURL: API_URL, headers: { 'Content-Type': 'application/json' } });
 
 axiosInstance.interceptors.request.use((config) => {

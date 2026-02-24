@@ -36,7 +36,7 @@ const BestSellers = memo(({ theme = 'dark', isPreview = false, previewData = [] 
 
     const fetchItems = async () => {
       try {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+        const API_URL = "https://wow-lifebackend.onrender.com/api";
         const response = await fetch(`${API_URL}/bestsellers`);
         const result = await response.json();
         

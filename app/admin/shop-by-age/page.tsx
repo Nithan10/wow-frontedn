@@ -6,7 +6,7 @@ import Layout from '../layout/layout';
 import axios from 'axios';
 import ShopByAgeSection, { AgeGroupItem } from '../../components-sections/ShopByAgeSection'; 
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const API_URL = "https://wow-lifebackend.onrender.com/api";
 
 const axiosInstance = axios.create({
   baseURL: API_URL,

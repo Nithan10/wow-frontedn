@@ -15,7 +15,7 @@ interface Character {
 }
 
 // API Configuration
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const API_URL = "https://wow-lifebackend.onrender.com/api";
 
 // Create axios instance with interceptors
 const axiosInstance = axios.create({
