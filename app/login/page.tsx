@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent, useEffect } from "react";
+import { useState, FormEvent, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
@@ -26,7 +26,8 @@ interface AuthResponse {
   };
 }
 
-export default function AuthPage() {
+// 1. We move the main logic into an inner component
+function AuthContent() {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -374,5 +375,14 @@ export default function AuthPage() {
         </p>
       </div>
     </section>
+  );
+}
+
+// 2. We wrap the inner component in a Suspense boundary and export it
+export default function AuthPage() {
+  return (
+    <Suspense fallback={<div className="flex h-screen w-full items-center justify-center bg-black text-white">Loading Authentication...</div>}>
+      <AuthContent />
+    </Suspense>
   );
 }
