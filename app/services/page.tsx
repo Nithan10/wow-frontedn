@@ -56,7 +56,7 @@ export default function ServicesPage(props: any) {
         const result = await response.json();
         
         if (result.success && result.data) {
-          setRetailProducts(result.data.retailProducts || []);   
+          setRetailProducts(result.data.retailProducts || []);
           setWholesaleProducts(result.data.wholesaleProducts || []);
           if (result.data.retailOffer) setRetailOffer(result.data.retailOffer);
           if (result.data.wholesaleOffer) setWholesaleOffer(result.data.wholesaleOffer);
@@ -100,7 +100,7 @@ export default function ServicesPage(props: any) {
   }
 
   return (
-    <div className={`relative min-h-screen w-full flex flex-col transition-colors duration-500 overflow-x-hidden ${
+    <div className={`relative min-h-screen w-full max-w-[100vw] flex flex-col transition-colors duration-500 overflow-x-hidden ${
       isDarkMode 
         ? 'bg-black text-white selection:bg-yellow-500/30 selection:text-yellow-200' 
         : 'bg-slate-50 text-slate-900 selection:bg-yellow-500/30 selection:text-yellow-900'
@@ -114,17 +114,16 @@ export default function ServicesPage(props: any) {
 
       {!isPreview && <Navbar theme={theme} toggleTheme={toggleTheme} />}
 
-      <div className={`relative z-10 flex-grow ${isPreview ? 'py-12' : 'pt-24 pb-12'} px-4 md:px-8 w-full`}>
+      <div className={`relative z-10 flex-grow w-full ${isPreview ? 'py-12' : 'pt-24 pb-12'} px-4 sm:px-6 lg:px-8`}>
         <div className="max-w-7xl mx-auto mb-12 w-full">
           
-          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-12 w-full max-w-[calc(100vw-2rem)] md:max-w-full">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-12 w-full">
             <div className="space-y-4 w-full lg:w-auto">
               <div className="relative">
-                <h1 className="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter mb-2 relative leading-tight break-words">
-                  <span className="relative z-10 block sm:inline">
-                    <span className={isDarkMode ? 'text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]' : 'text-slate-900 drop-shadow-sm'}>WOW</span>
-                    <span className={`bg-gradient-to-r from-[#D4AF37] via-[#FFD700] to-[#B8860B] bg-clip-text text-transparent animate-gradient sm:ml-3 ${isDarkMode ? 'drop-shadow-[0_0_20px_rgba(234,179,8,0.3)]' : ''}`}>LIFESTYLE</span>
-                  </span>
+                {/* Wrapped title in a flex container to prevent long string overflow */}
+                <h1 className="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter mb-2 relative leading-tight flex flex-wrap gap-x-3 items-center">
+                  <span className={isDarkMode ? 'text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]' : 'text-slate-900 drop-shadow-sm'}>WOW</span>
+                  <span className={`bg-gradient-to-r from-[#D4AF37] via-[#FFD700] to-[#B8860B] bg-clip-text text-transparent animate-gradient ${isDarkMode ? 'drop-shadow-[0_0_20px_rgba(234,179,8,0.3)]' : ''}`}>LIFESTYLE</span>
                 </h1>
                 <div className="flex items-center gap-3 mt-3">
                   <div className="w-4 h-4 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 shadow-[0_0_10px_rgba(234,179,8,0.8)] animate-pulse flex-shrink-0" />
@@ -167,25 +166,25 @@ export default function ServicesPage(props: any) {
             </div>
           </div>
 
-          {/* GRID LAYOUT */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full max-w-full">
+          {/* GRID LAYOUT - Added flex-col max-w-full containment */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full">
             
-            {/* PRODUCT LIST (Left Column) */}
-            <div className="lg:col-span-2 w-full max-w-[calc(100vw-2rem)] md:max-w-full min-w-0">
+            {/* PRODUCT LIST (Left Column) - Strictly enforced min-w-0 */}
+            <div className="lg:col-span-2 flex flex-col min-w-0 w-full">
               <div className={`backdrop-blur-xl rounded-3xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.1)] border w-full ${
                 isDarkMode ? 'bg-neutral-950/80 border-yellow-500/20' : 'bg-white border-yellow-400/30'
               }`}>
                 <div className={`p-5 sm:p-8 border-b flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full ${
                   isDarkMode ? 'bg-gradient-to-r from-neutral-900/50 to-neutral-950/50 border-yellow-500/20' : 'bg-gradient-to-r from-yellow-50 to-white border-yellow-400/30'
                 }`}>
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-3 sm:gap-4 mb-2">
                       <div className="w-1.5 h-6 sm:h-8 rounded-full bg-gradient-to-b from-yellow-300 to-yellow-600 shadow-[0_0_10px_rgba(234,179,8,0.5)] flex-shrink-0" />
-                      <h2 className={`text-xl sm:text-2xl font-black tracking-widest uppercase ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+                      <h2 className={`text-xl sm:text-2xl font-black tracking-widest uppercase truncate ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
                         {viewMode === 'retail' ? 'Retail Collection' : 'Wholesale Vault'}
                       </h2>
                     </div>
-                    <p className={`text-xs sm:text-sm pl-4 sm:pl-6 font-medium ${isDarkMode ? 'text-yellow-500/60' : 'text-yellow-700/70'}`}>
+                    <p className={`text-xs sm:text-sm pl-4 sm:pl-6 font-medium truncate ${isDarkMode ? 'text-yellow-500/60' : 'text-yellow-700/70'}`}>
                       {viewMode === 'retail' ? 'Curated selections with exclusive pricing' : 'Bulk acquisition catalog with maximum margins'}
                     </p>
                   </div>
@@ -196,22 +195,23 @@ export default function ServicesPage(props: any) {
                   </div>
                 </div>
 
-                <div className="overflow-x-auto w-full max-w-full">
-                  <table className="w-full min-w-[600px] border-collapse">
+                {/* Secure Table Wrapper */}
+                <div className="overflow-x-auto w-full">
+                  <table className="w-full min-w-[600px] border-collapse text-left whitespace-nowrap">
                     <thead className={`border-b ${isDarkMode ? 'bg-neutral-900/40 border-yellow-500/20' : 'bg-yellow-50/50 border-yellow-200'}`}>
                       <tr>
-                        <th className={`text-left p-4 sm:p-5 text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-yellow-600/80' : 'text-yellow-700'}`}>Product</th>
-                        <th className={`text-left p-4 sm:p-5 text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-yellow-600/80' : 'text-yellow-700'}`}>Category</th>
-                        <th className={`text-left p-4 sm:p-5 text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-yellow-600/80' : 'text-yellow-700'}`}>Price</th>
+                        <th className={`p-4 sm:p-5 text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-yellow-600/80' : 'text-yellow-700'}`}>Product</th>
+                        <th className={`p-4 sm:p-5 text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-yellow-600/80' : 'text-yellow-700'}`}>Category</th>
+                        <th className={`p-4 sm:p-5 text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-yellow-600/80' : 'text-yellow-700'}`}>Price</th>
                         {viewMode === 'retail' ? (
                           <>
-                            <th className={`text-left p-4 sm:p-5 text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-yellow-600/80' : 'text-yellow-700'}`}>Discount</th>
-                            <th className={`text-left p-4 sm:p-5 text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-yellow-600/80' : 'text-yellow-700'}`}>Status</th>
+                            <th className={`p-4 sm:p-5 text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-yellow-600/80' : 'text-yellow-700'}`}>Discount</th>
+                            <th className={`p-4 sm:p-5 text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-yellow-600/80' : 'text-yellow-700'}`}>Status</th>
                           </>
                         ) : (
                           <>
-                            <th className={`text-left p-4 sm:p-5 text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-yellow-600/80' : 'text-yellow-700'}`}>MOQ</th>
-                            <th className={`text-left p-4 sm:p-5 text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-yellow-600/80' : 'text-yellow-700'}`}>Margin</th>
+                            <th className={`p-4 sm:p-5 text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-yellow-600/80' : 'text-yellow-700'}`}>MOQ</th>
+                            <th className={`p-4 sm:p-5 text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-yellow-600/80' : 'text-yellow-700'}`}>Margin</th>
                           </>
                         )}
                       </tr>
@@ -234,13 +234,13 @@ export default function ServicesPage(props: any) {
                               }`}>
                                 {product.icon}
                               </div>
-                              <div className="min-w-0 flex-1">
-                                <div className={`font-bold text-base sm:text-lg tracking-wide ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{product.name}</div>
-                                <div className="flex items-center gap-2 sm:gap-3 mt-1 sm:mt-1.5 flex-wrap">
+                              <div className="flex flex-col">
+                                <span className={`font-bold text-base sm:text-lg tracking-wide ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{product.name}</span>
+                                <div className="flex items-center gap-2 sm:gap-3 mt-1 sm:mt-1.5">
                                   <span className={`text-[10px] px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md font-bold border ${
                                     isDarkMode ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20' : 'bg-yellow-100 text-yellow-800 border-yellow-200'
                                   }`}>⭐ {product.rating}</span>
-                                  <span className={`text-[10px] sm:text-xs font-medium whitespace-nowrap ${isDarkMode ? 'text-gray-500' : 'text-slate-500'}`}>
+                                  <span className={`text-[10px] sm:text-xs font-medium ${isDarkMode ? 'text-gray-500' : 'text-slate-500'}`}>
                                     {viewMode === 'retail' ? `${product.sales || '0'} sold` : `${product.orders || '0'} orders`}
                                   </span>
                                 </div>
@@ -248,7 +248,7 @@ export default function ServicesPage(props: any) {
                             </div>
                           </td>
                           <td className="p-4 sm:p-5">
-                            <span className={`text-[10px] sm:text-xs font-bold tracking-widest uppercase px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg border whitespace-nowrap ${
+                            <span className={`text-[10px] sm:text-xs font-bold tracking-widest uppercase px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg border ${
                               isDarkMode ? 'text-yellow-500/80 bg-neutral-900 border-white/10' : 'text-yellow-700 bg-yellow-50 border-yellow-200'
                             }`}>
                               {product.category}
@@ -256,19 +256,19 @@ export default function ServicesPage(props: any) {
                           </td>
                           <td className="p-4 sm:p-5">
                             <div className="flex flex-col">
-                              <span className={`font-black text-lg sm:text-xl whitespace-nowrap ${isDarkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>{product.price}</span>
+                              <span className={`font-black text-lg sm:text-xl ${isDarkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>{product.price}</span>
                               {viewMode === 'retail' && product.originalPrice && <span className={`text-[10px] sm:text-xs line-through font-medium ${isDarkMode ? 'text-gray-500' : 'text-slate-400'}`}>{product.originalPrice}</span>}
                             </div>
                           </td>
                           {viewMode === 'retail' ? (
                             <>
-                              <td className="p-4 sm:p-5"><span className="text-sm sm:text-base font-black text-green-500 whitespace-nowrap">{product.discount}</span></td>
-                              <td className="p-4 sm:p-5"><span className={`text-[10px] sm:text-xs font-bold tracking-widest uppercase whitespace-nowrap ${product.stock === 'In Stock' ? (isDarkMode ? 'text-yellow-400' : 'text-yellow-600') : 'text-red-500'}`}>{product.stock}</span></td>
+                              <td className="p-4 sm:p-5"><span className="text-sm sm:text-base font-black text-green-500">{product.discount}</span></td>
+                              <td className="p-4 sm:p-5"><span className={`text-[10px] sm:text-xs font-bold tracking-widest uppercase ${product.stock === 'In Stock' ? (isDarkMode ? 'text-yellow-400' : 'text-yellow-600') : 'text-red-500'}`}>{product.stock}</span></td>
                             </>
                           ) : (
                             <>
-                              <td className="p-4 sm:p-5"><span className={`text-xs sm:text-sm font-bold px-2 py-1 sm:px-3 sm:py-1 rounded-lg whitespace-nowrap ${isDarkMode ? 'text-white bg-neutral-800' : 'text-slate-800 bg-slate-100'}`}>{product.moq}</span></td>
-                              <td className="p-4 sm:p-5"><span className="text-sm font-bold text-green-500 whitespace-nowrap">{product.margin}</span></td>
+                              <td className="p-4 sm:p-5"><span className={`text-xs sm:text-sm font-bold px-2 py-1 sm:px-3 sm:py-1 rounded-lg ${isDarkMode ? 'text-white bg-neutral-800' : 'text-slate-800 bg-slate-100'}`}>{product.moq}</span></td>
+                              <td className="p-4 sm:p-5"><span className="text-sm font-bold text-green-500">{product.margin}</span></td>
                             </>
                           )}
                         </tr>
@@ -285,7 +285,7 @@ export default function ServicesPage(props: any) {
             </div>
 
             {/* GOLD THEMED OFFER CARD (Right Column) */}
-            <div className="lg:col-span-1 w-full max-w-[calc(100vw-2rem)] md:max-w-full min-w-0">
+            <div className="lg:col-span-1 flex flex-col min-w-0 w-full">
               <AnimatePresence mode="wait">
                 <motion.div key={viewMode} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.4 }} className="h-full w-full">
                   <div className={`rounded-3xl p-6 sm:p-8 h-full border relative overflow-hidden flex flex-col group w-full ${
@@ -302,13 +302,13 @@ export default function ServicesPage(props: any) {
                         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center shadow-[0_0_15px_rgba(234,179,8,0.4)] flex-shrink-0">
                           {viewMode === 'retail' ? <Crown className="w-4 h-4 text-black" /> : <TrendingUp className="w-4 h-4 text-black" />}
                         </div>
-                        <span className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] sm:tracking-[0.25em] text-yellow-600">{currentOffer.badgeText}</span>
+                        <span className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] sm:tracking-[0.25em] text-yellow-600 truncate">{currentOffer.badgeText}</span>
                       </div>
                       
                       {/* Main Offer Title */}
                       <div className="mb-8 sm:mb-10 text-center w-full">
                         <div className="relative inline-block">
-                          <div className={`text-6xl sm:text-7xl font-black mb-2 leading-none text-transparent bg-clip-text drop-shadow-lg ${
+                          <div className={`text-5xl sm:text-7xl font-black mb-2 leading-none text-transparent bg-clip-text drop-shadow-lg ${
                             isDarkMode ? 'bg-gradient-to-b from-white to-gray-400' : 'bg-gradient-to-b from-slate-900 to-slate-500'
                           }`}>
                             {currentOffer.discountPercentage}<span className="text-3xl sm:text-4xl text-yellow-500">%</span>
@@ -317,7 +317,7 @@ export default function ServicesPage(props: any) {
                             {viewMode === 'retail' ? <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" /> : <Zap className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" />}
                           </div>
                         </div>
-                        <div className={`text-lg sm:text-xl font-black mb-2 sm:mb-3 tracking-widest uppercase mt-4 break-words ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{currentOffer.title}</div>
+                        <div className={`text-lg sm:text-xl font-black mb-2 sm:mb-3 tracking-widest uppercase mt-4 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{currentOffer.title}</div>
                         <p className={`text-xs sm:text-sm font-medium px-2 sm:px-4 leading-relaxed ${isDarkMode ? 'text-gray-400' : 'text-slate-600'}`}>{currentOffer.description}</p>
                       </div>
 
@@ -380,8 +380,8 @@ export default function ServicesPage(props: any) {
                       )}
 
                       {/* CTA Button */}
-                      <button className="mt-auto w-full py-3.5 sm:py-4 bg-gradient-to-r from-yellow-600 via-yellow-400 to-yellow-600 bg-[length:200%_auto] hover:bg-[position:right_center] text-black font-black tracking-widest uppercase rounded-xl transition-all duration-300 flex items-center justify-center gap-2 sm:gap-3 shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:shadow-[0_0_30px_rgba(234,179,8,0.5)] hover:scale-[1.02] active:scale-[0.98] text-sm sm:text-base">
-                        {viewMode === 'retail' ? <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" /> : <Zap className="w-4 h-4 sm:w-5 sm:h-5" />} 
+                      <button className="mt-auto w-full py-3.5 sm:py-4 bg-gradient-to-r from-yellow-600 via-yellow-400 to-yellow-600 bg-[length:200%_auto] hover:bg-[position:right_center] text-black font-black tracking-widest uppercase rounded-xl transition-all duration-300 flex items-center justify-center gap-2 sm:gap-3 shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:shadow-[0_0_30px_rgba(234,179,8,0.5)] hover:scale-[1.02] active:scale-[0.98] text-[11px] sm:text-sm">
+                        {viewMode === 'retail' ? <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" /> : <Zap className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />} 
                         <span className="truncate">{currentOffer.buttonText}</span>
                         <ArrowRight className="w-4 h-4 flex-shrink-0" />
                       </button>
