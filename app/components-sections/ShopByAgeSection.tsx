@@ -64,8 +64,8 @@ const ShopByAge = memo(({ theme, isPreview = false, previewData = [] }: ShopByAg
   if (items.length === 0) return null;
 
   return (
-    <section className={`py-12 md:py-24 relative overflow-hidden ${theme === 'light' ? 'bg-white' : 'bg-black'} border-t ${theme === 'light' ? 'border-gray-200' : 'border-white/5'}`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <section className={`py-12 md:py-24 w-full relative overflow-hidden ${theme === 'light' ? 'bg-white' : 'bg-black'} border-t ${theme === 'light' ? 'border-gray-200' : 'border-white/5'}`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
         <div className="text-center mb-10 md:mb-16">
           <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/5 mb-3">
             <Star size={12} className="text-[#D4AF37]" fill="#D4AF37" />
@@ -76,7 +76,10 @@ const ShopByAge = memo(({ theme, isPreview = false, previewData = [] }: ShopByAg
           </motion.h2>
         </div>
 
-        <div className="flex flex-wrap justify-center gap-6 md:gap-8 pb-8">
+        {/* Container has been made fully responsive. 
+          gap-3 on mobile translates to 0.75rem.
+        */}
+        <div className="flex flex-wrap justify-center gap-3 sm:gap-6 md:gap-8 pb-8 w-full max-w-full">
           {items.map((age, i) => {
             const IconComponent = ICON_MAP[age.icon] || Star; // Fallback to Star if string doesn't match
             
@@ -88,27 +91,31 @@ const ShopByAge = memo(({ theme, isPreview = false, previewData = [] }: ShopByAg
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ delay: i * 0.05 }}
                 whileHover={{ y: -10 }}
-                className="relative flex-shrink-0 w-[160px] md:w-[220px] aspect-[4/5] rounded-[2rem] overflow-hidden cursor-pointer group shadow-xl will-change-transform"
+                // Responsive calculation: Exactly 50% minus half the gap on mobile forces 2-columns.
+                // Reverts back to fixed pixel widths on tablet/desktop.
+                className="relative flex-shrink-0 w-[calc(50%-0.375rem)] sm:w-[160px] md:w-[220px] aspect-[4/5] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden cursor-pointer group shadow-xl will-change-transform"
               >
                 <div className={`absolute inset-0 bg-gradient-to-b ${age.gradient} opacity-90 transition-opacity duration-300`} />
                 
-                <div className="absolute inset-0 flex flex-col p-4">
-                  <div className="relative w-full aspect-square bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center overflow-hidden mb-4 shadow-inner border border-white/10 group-hover:bg-white/30 transition-colors">
+                <div className="absolute inset-0 flex flex-col p-3 md:p-4">
+                  <div className="relative w-full aspect-square bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center overflow-hidden mb-2 md:mb-4 shadow-inner border border-white/10 group-hover:bg-white/30 transition-colors">
                     <motion.img 
                       src={age.img} 
                       alt={age.label} 
                       loading="lazy"
-                      className="w-4/5 h-4/5 object-contain drop-shadow-md" 
+                      className="w-3/4 h-3/4 md:w-4/5 md:h-4/5 object-contain drop-shadow-md" 
                       whileHover={{ scale: 1.15 }}
                       transition={{ type: "spring", stiffness: 200 }}
                     />
                   </div>
-                  <div className="flex-1 flex flex-col items-center justify-end pb-2">
-                    <div className="text-white mb-2 opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300">
-                      <IconComponent size={20} />
+                  <div className="flex-1 flex flex-col items-center justify-end pb-1 md:pb-2">
+                    <div className="text-white mb-1 md:mb-2 opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300">
+                      {/* Dynamically sizing icons for mobile vs desktop */}
+                      <IconComponent className="w-4 h-4 md:w-5 md:h-5" />
                     </div>
-                    <h3 className="text-white font-black text-lg md:text-xl uppercase leading-tight text-center drop-shadow-sm tracking-wide">{age.label}</h3>
-                    <p className="text-white/80 text-[10px] md:text-xs font-bold uppercase tracking-widest mt-1 text-center">{age.sub}</p>
+                    {/* Typography dynamically scaled down for 2-column mobile view */}
+                    <h3 className="text-white font-black text-sm sm:text-lg md:text-xl uppercase leading-tight text-center drop-shadow-sm tracking-wide px-1">{age.label}</h3>
+                    <p className="text-white/80 text-[8px] sm:text-[10px] md:text-xs font-bold uppercase tracking-widest mt-1 text-center truncate w-full px-2">{age.sub}</p>
                   </div>
                 </div>
               </motion.div>
@@ -116,6 +123,12 @@ const ShopByAge = memo(({ theme, isPreview = false, previewData = [] }: ShopByAg
           })}
         </div>
       </div>
+
+      {/* Global override to ensure NO scrollbars appear inside preview wrappers */}
+      <style jsx global>{`
+        .no-scrollbar::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
+        .no-scrollbar { -ms-overflow-style: none !important; scrollbar-width: none !important; }
+      `}</style>
     </section>
   );
 });
