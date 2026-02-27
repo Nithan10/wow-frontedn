@@ -174,17 +174,17 @@ export default function ContactAdminPage() {
             </select>
             
             <div className="flex bg-gray-200 rounded-lg p-1 mr-2">
-              <button onClick={() => handleTabChange('edit')} className={`px-4 py-2 rounded-lg text-sm font-medium flex gap-2 ${activeTab === 'edit' ? 'bg-white shadow' : 'text-gray-600'}`}><Edit2 size={16}/> Edit</button>
-              <button onClick={() => handleTabChange('preview')} className={`px-4 py-2 rounded-lg text-sm font-medium flex gap-2 ${activeTab === 'preview' ? 'bg-white shadow' : 'text-gray-600'}`}><Eye size={16}/> Preview</button>
-              <button onClick={() => handleTabChange('messages')} className={`px-4 py-2 rounded-lg text-sm font-medium flex gap-2 ${activeTab === 'messages' ? 'bg-white shadow text-blue-600' : 'text-gray-600'}`}><Inbox size={16}/> Messages</button>
+              <button onClick={() => handleTabChange('edit')} className={`px-4 py-2 rounded-lg text-sm font-medium flex gap-2 transition-colors ${activeTab === 'edit' ? 'bg-white shadow text-gray-900' : 'text-gray-600 hover:text-gray-800'}`}><Edit2 size={16}/> Edit</button>
+              <button onClick={() => handleTabChange('preview')} className={`px-4 py-2 rounded-lg text-sm font-medium flex gap-2 transition-colors ${activeTab === 'preview' ? 'bg-white shadow text-gray-900' : 'text-gray-600 hover:text-gray-800'}`}><Eye size={16}/> Preview</button>
+              <button onClick={() => handleTabChange('messages')} className={`px-4 py-2 rounded-lg text-sm font-medium flex gap-2 transition-colors ${activeTab === 'messages' ? 'bg-white shadow text-blue-600' : 'text-gray-600 hover:text-gray-800'}`}><Inbox size={16}/> Messages</button>
             </div>
 
             {isAuthenticated && activeTab === 'edit' && (
               <>
-                <button onClick={handleResetClick} disabled={isSaving || isResetting} className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg text-sm font-medium flex gap-2">
+                <button onClick={handleResetClick} disabled={isSaving || isResetting} className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg text-sm font-medium flex gap-2 transition-colors">
                   {isResetting ? <Loader2 size={16} className="animate-spin"/> : <RefreshCw size={16}/>} Reset
                 </button>
-                <button onClick={handleSave} disabled={isSaving || isResetting} className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium flex gap-2">
+                <button onClick={handleSave} disabled={isSaving || isResetting} className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium flex gap-2 transition-colors">
                   {isSaving ? <Loader2 size={16} className="animate-spin"/> : <Save size={16}/>} Save
                 </button>
               </>
@@ -204,7 +204,7 @@ export default function ContactAdminPage() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="p-6 border-b border-gray-100 flex justify-between items-center">
               <h2 className="font-bold text-gray-800 text-lg flex items-center gap-2"><Inbox size={20} className="text-blue-500"/> Customer Inquiries</h2>
-              <button onClick={fetchMessages} className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1">
+              <button onClick={fetchMessages} className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1 transition-colors">
                 <RefreshCw size={14} className={isLoadingMessages ? 'animate-spin' : ''} /> Refresh
               </button>
             </div>
@@ -249,12 +249,24 @@ export default function ContactAdminPage() {
           </div>
         )}
 
-        {/* PREVIEW TAB */}
+        {/* PREVIEW TAB - UPDATED FOR RESPONSIVENESS */}
         {activeTab === 'preview' && (
-          <div className={`rounded-xl shadow-sm border border-gray-100 p-8 flex justify-center ${theme === 'dark' ? 'bg-slate-800' : 'bg-gray-100'}`}>
-             <div className="w-full max-w-5xl">
-               <ContactPage isOpen={true} onClose={() => {}} isDarkMode={theme === 'dark'} isPreview={true} previewData={data} />
-             </div>
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center text-sm text-gray-500 bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
+              <Eye size={16} className="mr-2 text-blue-500" /> 
+              <strong>Live Preview Mode</strong>
+              <span className="ml-auto text-xs bg-blue-50 text-blue-700 px-3 py-1 rounded-full font-medium border border-blue-100 hidden sm:inline-block">
+                Resize window to test mobile responsiveness
+              </span>
+            </div>
+            
+            <div className={`w-full rounded-2xl shadow-inner border p-4 sm:p-8 flex justify-center items-center overflow-hidden transition-colors duration-500 ${
+              theme === 'dark' ? 'bg-neutral-950 border-gray-800' : 'bg-gray-200/50 border-gray-200'
+            }`}>
+               <div className="w-full max-w-5xl relative flex justify-center">
+                 <ContactPage isOpen={true} onClose={() => {}} isDarkMode={theme === 'dark'} isPreview={true} previewData={data} />
+               </div>
+            </div>
           </div>
         )}
 
@@ -269,11 +281,11 @@ export default function ContactAdminPage() {
                 <div className="space-y-4">
                   <div>
                     <label className="text-sm font-medium text-gray-700 mb-1 block">Title</label>
-                    <input type="text" value={data.title} onChange={e => handleChange('title', e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+                    <input type="text" value={data.title} onChange={e => handleChange('title', e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all" />
                   </div>
                   <div>
                     <label className="text-sm font-medium text-gray-700 mb-1 block">Subtitle</label>
-                    <input type="text" value={data.subtitle} onChange={e => handleChange('subtitle', e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+                    <input type="text" value={data.subtitle} onChange={e => handleChange('subtitle', e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all" />
                   </div>
                 </div>
 
@@ -283,14 +295,14 @@ export default function ContactAdminPage() {
                     <label className="text-sm font-medium text-gray-700 mb-1 block">Email Address</label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-2.5 text-gray-400" size={18} />
-                      <input type="email" value={data.email} onChange={e => handleChange('email', e.target.value)} className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+                      <input type="email" value={data.email} onChange={e => handleChange('email', e.target.value)} className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all" />
                     </div>
                   </div>
                   <div>
                     <label className="text-sm font-medium text-gray-700 mb-1 block">Phone Number</label>
                     <div className="relative">
                       <Phone className="absolute left-3 top-2.5 text-gray-400" size={18} />
-                      <input type="text" value={data.phone} onChange={e => handleChange('phone', e.target.value)} className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+                      <input type="text" value={data.phone} onChange={e => handleChange('phone', e.target.value)} className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all" />
                     </div>
                   </div>
                 </div>
@@ -301,22 +313,22 @@ export default function ContactAdminPage() {
                 <h3 className="font-semibold text-gray-800 border-b pb-2 flex items-center gap-2"><MapPin size={18} className="text-blue-500"/> Location</h3>
                 <div>
                   <label className="text-sm font-medium text-gray-700 mb-1 block">Physical Address</label>
-                  <textarea value={data.address} onChange={e => handleChange('address', e.target.value)} rows={3} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none" />
+                  <textarea value={data.address} onChange={e => handleChange('address', e.target.value)} rows={3} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none transition-all" />
                 </div>
 
                 <h3 className="font-semibold text-gray-800 border-b pb-2 flex items-center gap-2 mt-8"><Clock size={18} className="text-blue-500"/> Business Hours</h3>
                 <div className="space-y-4">
                   <div>
                     <label className="text-sm font-medium text-gray-700 mb-1 block">Monday - Friday</label>
-                    <input type="text" value={data.hoursWeekday} onChange={e => handleChange('hoursWeekday', e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="9:00 AM - 8:00 PM" />
+                    <input type="text" value={data.hoursWeekday} onChange={e => handleChange('hoursWeekday', e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="9:00 AM - 8:00 PM" />
                   </div>
                   <div>
                     <label className="text-sm font-medium text-gray-700 mb-1 block">Saturday</label>
-                    <input type="text" value={data.hoursSaturday} onChange={e => handleChange('hoursSaturday', e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="10:00 AM - 6:00 PM" />
+                    <input type="text" value={data.hoursSaturday} onChange={e => handleChange('hoursSaturday', e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="10:00 AM - 6:00 PM" />
                   </div>
                   <div>
                     <label className="text-sm font-medium text-gray-700 mb-1 block">Sunday</label>
-                    <input type="text" value={data.hoursSunday} onChange={e => handleChange('hoursSunday', e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Closed" />
+                    <input type="text" value={data.hoursSunday} onChange={e => handleChange('hoursSunday', e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="Closed" />
                   </div>
                 </div>
               </div>

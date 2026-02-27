@@ -34,6 +34,7 @@ export default function ServicesAdminPage() {
   const [activeTab, setActiveTab] = useState<'edit' | 'preview'>('edit');
   const [editMode, setEditMode] = useState<'retail' | 'wholesale'>('retail');
   const [leftMode, setLeftMode] = useState<'products' | 'offer'>('products'); 
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   
   const [data, setData] = useState({ 
     retailProducts: [], 
@@ -186,6 +187,12 @@ export default function ServicesAdminPage() {
     });
   };
 
+  // Sync internal theme state with the local storage so the preview component reads it
+  useEffect(() => {
+    localStorage.setItem('theme', theme);
+    window.dispatchEvent(new CustomEvent('themeChange', { detail: { theme } }));
+  }, [theme]);
+
   if (isLoading) return <Layout><div className="min-h-screen flex justify-center items-center"><Loader2 className="animate-spin text-yellow-500" size={40}/></div></Layout>;
 
   const currentOfferData = editMode === 'retail' ? data.retailOffer : data.wholesaleOffer;
@@ -235,22 +242,28 @@ export default function ServicesAdminPage() {
           )}
         </AnimatePresence>
 
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Services Manager</h1>
             <p className="text-gray-500 text-sm">Manage Retail and Wholesale Products & Offers</p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
+            <select value={theme} onChange={(e) => setTheme(e.target.value as 'dark'|'light')} className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white outline-none hidden md:block">
+              <option value="dark">Dark Theme</option>
+              <option value="light">Light Theme</option>
+            </select>
+            
             <div className="flex bg-gray-200 rounded-lg p-1 mr-2">
-              <button onClick={() => setActiveTab('edit')} className={`px-4 py-2 rounded-lg text-sm font-medium flex gap-2 ${activeTab === 'edit' ? 'bg-white shadow' : 'text-gray-600'}`}><Edit2 size={16}/> Edit</button>
-              <button onClick={() => setActiveTab('preview')} className={`px-4 py-2 rounded-lg text-sm font-medium flex gap-2 ${activeTab === 'preview' ? 'bg-white shadow' : 'text-gray-600'}`}><Eye size={16}/> Preview</button>
+              <button onClick={() => setActiveTab('edit')} className={`px-4 py-2 rounded-lg text-sm font-medium flex gap-2 transition-colors ${activeTab === 'edit' ? 'bg-white shadow text-gray-900' : 'text-gray-600 hover:text-gray-800'}`}><Edit2 size={16}/> Edit</button>
+              <button onClick={() => setActiveTab('preview')} className={`px-4 py-2 rounded-lg text-sm font-medium flex gap-2 transition-colors ${activeTab === 'preview' ? 'bg-white shadow text-gray-900' : 'text-gray-600 hover:text-gray-800'}`}><Eye size={16}/> Preview</button>
             </div>
-            {isAuthenticated && (
+            
+            {isAuthenticated && activeTab === 'edit' && (
               <>
-                <button onClick={handleResetClick} disabled={isSaving || isResetting} className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg text-sm font-medium flex gap-2">
+                <button onClick={handleResetClick} disabled={isSaving || isResetting} className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg text-sm font-medium flex gap-2 transition-colors">
                   {isResetting ? <Loader2 size={16} className="animate-spin"/> : <RefreshCw size={16}/>} Reset
                 </button>
-                <button onClick={handleSave} disabled={isSaving || isResetting} className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium flex gap-2">
+                <button onClick={handleSave} disabled={isSaving || isResetting} className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium flex gap-2 transition-colors">
                   {isSaving ? <Loader2 size={16} className="animate-spin"/> : <Save size={16}/>} Save Changes
                 </button>
               </>
@@ -265,20 +278,38 @@ export default function ServicesAdminPage() {
           </div>
         )}
 
-        {/* Updated Preview Tab matching the Black & Gold aesthetic wrapper */}
-        {activeTab === 'preview' ? (
-          <div className="bg-black rounded-xl shadow-sm border border-yellow-500/20 overflow-hidden relative" style={{ minHeight: '800px' }}>
-             <ServicesPage isPreview={true} previewData={data} />
+        {/* PREVIEW TAB */}
+        {activeTab === 'preview' && (
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center text-sm text-gray-500 bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
+              <Eye size={16} className="mr-2 text-yellow-600" /> 
+              <strong>Live Preview Mode</strong>
+              <span className="ml-auto text-xs bg-yellow-50 text-yellow-700 px-3 py-1 rounded-full font-medium border border-yellow-100 hidden sm:inline-block">
+                Resize window to test mobile responsiveness
+              </span>
+            </div>
+            
+            <div className={`w-full h-[800px] rounded-2xl shadow-inner border overflow-hidden relative transition-colors duration-500 ${
+              theme === 'dark' ? 'bg-neutral-950 border-gray-800' : 'bg-gray-200/50 border-gray-200'
+            }`}>
+               {/* Internal container to allow natural scrolling of the page view without breaking the admin layout */}
+               <div className="absolute inset-0 overflow-y-auto overflow-x-hidden no-scrollbar">
+                 <ServicesPage isPreview={true} previewData={data} />
+               </div>
+            </div>
           </div>
-        ) : (
+        )}
+
+        {/* EDIT TAB */}
+        {activeTab === 'edit' && (
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             
             {/* Top Level Mode Tabs */}
             <div className="flex border-b border-gray-200">
-              <button onClick={() => setEditMode('retail')} className={`flex-1 py-4 font-bold text-sm flex justify-center items-center gap-2 ${editMode === 'retail' ? 'text-yellow-600 border-b-2 border-yellow-500 bg-yellow-50/30' : 'text-gray-500 hover:bg-gray-50'}`}>
+              <button onClick={() => setEditMode('retail')} className={`flex-1 py-4 font-bold text-sm flex justify-center items-center gap-2 transition-colors ${editMode === 'retail' ? 'text-yellow-600 border-b-2 border-yellow-500 bg-yellow-50/30' : 'text-gray-500 hover:bg-gray-50'}`}>
                 <ShoppingBag size={16}/> Retail Config
               </button>
-              <button onClick={() => setEditMode('wholesale')} className={`flex-1 py-4 font-bold text-sm flex justify-center items-center gap-2 ${editMode === 'wholesale' ? 'text-yellow-600 border-b-2 border-yellow-500 bg-yellow-50/30' : 'text-gray-500 hover:bg-gray-50'}`}>
+              <button onClick={() => setEditMode('wholesale')} className={`flex-1 py-4 font-bold text-sm flex justify-center items-center gap-2 transition-colors ${editMode === 'wholesale' ? 'text-yellow-600 border-b-2 border-yellow-500 bg-yellow-50/30' : 'text-gray-500 hover:bg-gray-50'}`}>
                 <Building2 size={16}/> Wholesale Config
               </button>
             </div>
@@ -373,7 +404,7 @@ export default function ServicesAdminPage() {
                           </div>
                         </>
                       )}
-                      <button type="submit" disabled={!isAuthenticated} className="w-full mt-2 py-3 bg-yellow-500 text-black font-bold rounded-lg hover:bg-yellow-400">
+                      <button type="submit" disabled={!isAuthenticated} className="w-full mt-2 py-3 bg-yellow-500 text-black font-bold rounded-lg hover:bg-yellow-400 transition-colors shadow-sm">
                         Add Product
                       </button>
                     </form>
@@ -442,7 +473,7 @@ export default function ServicesAdminPage() {
                   Product Roster
                 </h3>
                 {(editMode === 'retail' ? data.retailProducts : data.wholesaleProducts).map((item:any) => (
-                  <div key={item.id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex gap-4 items-center">
+                  <div key={item.id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex gap-4 items-center transition-all hover:shadow-md">
                     <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-2xl">{item.icon}</div>
                     <div className="flex-1">
                       <h4 className="font-bold text-gray-800">{item.name}</h4>
@@ -458,7 +489,7 @@ export default function ServicesAdminPage() {
                   </div>
                 ))}
                 {(editMode === 'retail' ? data.retailProducts : data.wholesaleProducts).length === 0 && (
-                  <div className="p-12 text-center text-gray-400 border-2 border-dashed rounded-xl">
+                  <div className="p-12 text-center text-gray-400 border-2 border-dashed rounded-xl bg-white/50">
                     No products added yet.
                   </div>
                 )}
@@ -467,6 +498,12 @@ export default function ServicesAdminPage() {
           </div>
         )}
       </div>
+
+      {/* Required for ensuring preview scrollbars are invisible just like main page */}
+      <style jsx global>{`
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      `}</style>
     </Layout>
   );
 }
