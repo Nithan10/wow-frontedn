@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, Save, Eye, Edit2, Loader2, RefreshCw, AlertCircle, CheckCircle, Image as ImageIcon, Type, LayoutTemplate } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Layout from '../layout/layout';
 import axios from 'axios';
 import ShopByAgeSection, { AgeGroupItem } from '../../components-sections/ShopByAgeSection'; 
@@ -42,6 +43,8 @@ export default function ShopByAgeAdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [saveStatus, setSaveStatus] = useState({ type: '', message: '' });
 
+  const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, title: '', message: '', action: () => {} });
+
   // Form States
   const [newLabel, setNewLabel] = useState('');
   const [newSub, setNewSub] = useState('');
@@ -53,6 +56,12 @@ export default function ShopByAgeAdminPage() {
     checkAuth();
     fetchConfig();
   }, []);
+
+  // Sync internal theme state with the local storage so the preview component reads it seamlessly
+  useEffect(() => {
+    localStorage.setItem('theme', theme);
+    window.dispatchEvent(new CustomEvent('themeChange', { detail: { theme } }));
+  }, [theme]);
 
   const checkAuth = () => {
     const token = localStorage.getItem('token');
@@ -87,17 +96,31 @@ export default function ShopByAgeAdminPage() {
     }
   };
 
-  const handleReset = async () => {
-    if (!confirm('Reset to defaults?')) return;
+  const executeReset = async () => {
     try {
       setIsResetting(true);
       const res = await axiosInstance.post('/shopbyage/reset');
-      if (res.data.success) setItems(res.data.data);
+      if (res.data.success) {
+        setItems(res.data.data);
+        setSaveStatus({ type: 'success', message: 'Reset to defaults successfully!' });
+        setTimeout(() => setSaveStatus({ type: '', message: '' }), 3000);
+      }
     } catch (error) {
       console.error(error);
+      setSaveStatus({ type: 'error', message: 'Failed to reset connection to server.' });
     } finally {
       setIsResetting(false);
     }
+  };
+
+  const handleResetClick = () => {
+    if (!isAuthenticated) return setSaveStatus({ type: 'error', message: 'Login required' });
+    setConfirmDialog({
+      isOpen: true,
+      title: 'Reset Configuration',
+      message: 'Are you sure you want to restore the default age groups? This will overwrite your current changes.',
+      action: executeReset
+    });
   };
 
   const handleAddItem = (e: React.FormEvent) => {
@@ -116,15 +139,66 @@ export default function ShopByAgeAdminPage() {
     setNewLabel(''); setNewSub(''); setNewImgUrl('');
   };
 
-  const handleDeleteItem = (id: string | number) => {
+  const executeDelete = (id: string | number) => {
     setItems(prev => prev.filter(item => item.id !== id));
+  };
+
+  const handleDeleteClick = (id: string | number) => {
+    setConfirmDialog({
+      isOpen: true,
+      title: 'Delete Age Group',
+      message: 'Are you sure you want to remove this age group? You must click "Save Changes" to apply this deletion to the database.',
+      action: () => executeDelete(id)
+    });
   };
 
   if (isLoading) return <Layout><div className="min-h-screen flex justify-center items-center"><Loader2 className="animate-spin text-[#D4AF37]" size={40}/></div></Layout>;
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+      <div className="min-h-screen bg-gray-50 p-4 md:p-8 relative">
+        
+        {/* CUSTOM CONFIRMATION MODAL */}
+        <AnimatePresence>
+          {confirmDialog.isOpen && (
+            <>
+              <motion.div 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                exit={{ opacity: 0 }} 
+                className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-[9998]" 
+                onClick={() => setConfirmDialog({ ...confirmDialog, isOpen: false })} 
+              />
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95, top: '50%', left: '50%', x: '-50%', y: '-50%' }} 
+                animate={{ opacity: 1, scale: 1 }} 
+                exit={{ opacity: 0, scale: 0.95 }} 
+                className="fixed z-[9999] bg-white rounded-xl shadow-2xl p-6 w-[90%] max-w-sm overflow-hidden border border-gray-100"
+              >
+                <div className="flex items-center gap-3 mb-4 text-red-600">
+                  <AlertCircle size={24} />
+                  <h3 className="text-xl font-bold text-gray-900">{confirmDialog.title}</h3>
+                </div>
+                <p className="text-gray-600 mb-6 text-sm leading-relaxed">{confirmDialog.message}</p>
+                <div className="flex justify-end gap-3">
+                  <button 
+                    onClick={() => setConfirmDialog({ ...confirmDialog, isOpen: false })} 
+                    className="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors font-medium text-sm"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    onClick={() => { confirmDialog.action(); setConfirmDialog({ ...confirmDialog, isOpen: false }); }} 
+                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium text-sm shadow-md shadow-red-600/20"
+                  >
+                    Confirm
+                  </button>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
+
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Shop By Age Manager</h1>
@@ -138,14 +212,25 @@ export default function ShopByAgeAdminPage() {
             </select>
 
             <div className="flex bg-gray-200 rounded-lg p-1">
-              <button onClick={() => setActiveTab('edit')} className={`px-4 py-2 rounded-lg text-sm font-medium flex gap-2 ${activeTab === 'edit' ? 'bg-white shadow' : 'text-gray-600'}`}><Edit2 size={16}/> Edit</button>
-              <button onClick={() => setActiveTab('preview')} className={`px-4 py-2 rounded-lg text-sm font-medium flex gap-2 ${activeTab === 'preview' ? 'bg-white shadow' : 'text-gray-600'}`}><Eye size={16}/> Preview</button>
+              <button onClick={() => setActiveTab('edit')} className={`px-4 py-2 rounded-lg text-sm font-medium flex gap-2 transition-colors ${activeTab === 'edit' ? 'bg-white shadow text-gray-900' : 'text-gray-600 hover:text-gray-900'}`}><Edit2 size={16}/> Edit</button>
+              <button onClick={() => setActiveTab('preview')} className={`px-4 py-2 rounded-lg text-sm font-medium flex gap-2 transition-colors ${activeTab === 'preview' ? 'bg-white shadow text-gray-900' : 'text-gray-600 hover:text-gray-900'}`}><Eye size={16}/> Preview</button>
             </div>
 
-            {isAuthenticated && (
+            {isAuthenticated && activeTab === 'edit' && (
               <>
-                <button onClick={handleReset} className="px-4 py-2 bg-gray-500 text-white rounded-lg text-sm flex gap-2"><RefreshCw size={16}/> Reset</button>
-                <button onClick={handleSave} disabled={isSaving} className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium flex gap-2 disabled:opacity-50">
+                <button 
+                  onClick={handleResetClick} 
+                  disabled={isSaving || isResetting}
+                  className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg text-sm flex gap-2 transition-colors disabled:opacity-50"
+                >
+                  {isResetting ? <Loader2 size={16} className="animate-spin"/> : <RefreshCw size={16}/>} Reset
+                </button>
+                
+                <button 
+                  onClick={handleSave} 
+                  disabled={isSaving || isResetting} 
+                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium flex gap-2 transition-colors disabled:opacity-50"
+                >
                   {isSaving ? <Loader2 size={16} className="animate-spin"/> : <Save size={16}/>} Save Changes
                 </button>
               </>
@@ -160,9 +245,25 @@ export default function ShopByAgeAdminPage() {
           </div>
         )}
 
+        {/* PREVIEW TAB WITH SCROLLBAR REMOVAL */}
         {activeTab === 'preview' ? (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-            <ShopByAgeSection theme={theme} isPreview={true} previewData={items} />
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center text-sm text-gray-500 bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
+              <Eye size={16} className="mr-2 text-blue-500" /> 
+              <strong>Live Preview Mode</strong>
+              <span className="ml-auto text-xs bg-blue-50 text-blue-700 px-3 py-1 rounded-full font-medium border border-blue-100 hidden sm:inline-block">
+                Scroll independently (Scrollbar hidden)
+              </span>
+            </div>
+            
+            <div className={`w-full h-[80vh] min-h-[600px] rounded-2xl shadow-inner border p-0 sm:p-4 overflow-hidden relative transition-colors duration-500 ${
+              theme === 'dark' ? 'bg-neutral-950 border-gray-800' : 'bg-gray-200/50 border-gray-200'
+            }`}>
+               {/* Inner container specifically to allow scrolling while hiding the tracks */}
+               <div className="w-full h-full overflow-y-auto overflow-x-hidden no-scrollbar rounded-xl">
+                 <ShopByAgeSection theme={theme} isPreview={true} previewData={items} />
+               </div>
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -223,7 +324,12 @@ export default function ShopByAgeAdminPage() {
                     <p className="text-xs text-gray-400 mt-1 font-mono">{item.img}</p>
                   </div>
 
-                  <button onClick={() => handleDeleteItem(item.id)} disabled={!isAuthenticated} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                  {/* CONNECTED TO handleDeleteClick to trigger modal */}
+                  <button 
+                    onClick={() => handleDeleteClick(item.id)} 
+                    disabled={!isAuthenticated} 
+                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                  >
                     <Trash2 size={20} />
                   </button>
                 </div>
@@ -236,6 +342,19 @@ export default function ShopByAgeAdminPage() {
           </div>
         )}
       </div>
+
+      {/* GLOBAL CSS TO FORCE HIDE SCROLLBARS ON PREVIEW */}
+      <style jsx global>{`
+        .no-scrollbar::-webkit-scrollbar { 
+          display: none !important; 
+          width: 0 !important; 
+          height: 0 !important; 
+        }
+        .no-scrollbar { 
+          -ms-overflow-style: none !important; 
+          scrollbar-width: none !important; 
+        }
+      `}</style>
     </Layout>
   );
 }
