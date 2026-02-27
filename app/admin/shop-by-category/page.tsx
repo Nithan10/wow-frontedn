@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, Save, Eye, Edit2, Loader2, RefreshCw, AlertCircle, CheckCircle, Image as ImageIcon, Type, Link, Layers } from 'lucide-react';
+// FIX: Added motion and AnimatePresence to the imports!
+import { motion, AnimatePresence } from 'framer-motion';
 import Layout from '../layout/layout';
 import axios from 'axios';
-// Updated import path to match your structure
 import ShopByCategorySection, { CategoryItem } from '../../components-sections/ShopByCategorySection'; 
 
 const API_URL = "https://wow-lifebackend.onrender.com/api";
@@ -38,9 +39,16 @@ export default function ShopByCategoryAdminPage() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [isResetting, setIsResetting] = useState(false); // Make sure we track reset state
+  const [isResetting, setIsResetting] = useState(false); 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [saveStatus, setSaveStatus] = useState({ type: '', message: '' });
+
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    action: () => {}
+  });
 
   // Form States
   const [newId, setNewId] = useState('');
@@ -88,8 +96,7 @@ export default function ShopByCategoryAdminPage() {
     }
   };
 
-  const handleReset = async () => {
-    if (!confirm('Are you sure you want to restore the default categories? This will overwrite your current changes.')) return;
+  const executeReset = async () => {
     try {
       setIsResetting(true);
       const res = await axiosInstance.post('/shopbycategory/reset');
@@ -106,6 +113,16 @@ export default function ShopByCategoryAdminPage() {
     }
   };
 
+  const handleResetClick = () => {
+    if (!isAuthenticated) return setSaveStatus({ type: 'error', message: 'Login required' });
+    setConfirmDialog({
+      isOpen: true,
+      title: 'Reset Configuration',
+      message: 'Are you sure you want to restore the default categories? This will overwrite your current changes.',
+      action: executeReset
+    });
+  };
+
   const handleAddItem = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newId || !newTitle || !newImgUrl) return;
@@ -119,9 +136,17 @@ export default function ShopByCategoryAdminPage() {
     setNewId(''); setNewTitle(''); setNewImgUrl(''); setNewDesc(''); setNewBadge(''); setNewCount(0);
   };
 
-  const handleDeleteItem = (id: string) => {
-    // Note: This removes it locally. You must click 'Save Changes' to update the database!
+  const executeDelete = (id: string) => {
     setItems(prev => prev.filter(item => item.id !== id));
+  };
+
+  const handleDeleteClick = (id: string) => {
+    setConfirmDialog({
+      isOpen: true,
+      title: 'Delete Category',
+      message: 'Are you sure you want to remove this category? You must click "Save Changes" to apply this deletion to the database.',
+      action: () => executeDelete(id)
+    });
   };
 
   if (isLoading) return <Layout><div className="min-h-screen flex justify-center items-center"><Loader2 className="animate-spin text-[#D4AF37]" size={40}/></div></Layout>;
@@ -129,6 +154,48 @@ export default function ShopByCategoryAdminPage() {
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+        
+        {/* CUSTOM CONFIRMATION MODAL */}
+        <AnimatePresence>
+          {confirmDialog.isOpen && (
+            <>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-[9998]"
+                onClick={() => setConfirmDialog({ ...confirmDialog, isOpen: false })}
+              />
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, top: '50%', left: '50%', x: '-50%', y: '-50%' }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="fixed z-[9999] bg-white rounded-xl shadow-2xl p-6 w-[90%] max-w-sm overflow-hidden border border-gray-100"
+              >
+                <div className="flex items-center gap-3 mb-4 text-red-600">
+                  <AlertCircle size={24} />
+                  <h3 className="text-xl font-bold text-gray-900">{confirmDialog.title}</h3>
+                </div>
+                <p className="text-gray-600 mb-6 text-sm leading-relaxed">{confirmDialog.message}</p>
+                <div className="flex justify-end gap-3">
+                  <button
+                    onClick={() => setConfirmDialog({ ...confirmDialog, isOpen: false })}
+                    className="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors font-medium text-sm"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => { confirmDialog.action(); setConfirmDialog({ ...confirmDialog, isOpen: false }); }}
+                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium text-sm shadow-md shadow-red-600/20"
+                  >
+                    Confirm
+                  </button>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
+
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Shop By Category Manager</h1>
@@ -146,9 +213,8 @@ export default function ShopByCategoryAdminPage() {
             
             {isAuthenticated && (
               <>
-                {/* Fixed: Re-added the Reset button here */}
                 <button 
-                  onClick={handleReset} 
+                  onClick={handleResetClick} 
                   disabled={isSaving || isResetting} 
                   className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg text-sm font-medium flex items-center gap-2 transition-colors disabled:opacity-50"
                 >
@@ -265,8 +331,9 @@ export default function ShopByCategoryAdminPage() {
                     <p className="text-xs text-gray-400 mt-1 font-mono">ID: {item.id}</p>
                   </div>
 
+                  {/* Connect the Delete button to the modal trigger */}
                   <button 
-                    onClick={() => handleDeleteItem(item.id)} 
+                    onClick={() => handleDeleteClick(item.id)} 
                     disabled={!isAuthenticated} 
                     className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                     title="Delete item (Remember to save changes!)"
