@@ -56,7 +56,7 @@ export default function ServicesPage(props: any) {
         const result = await response.json();
         
         if (result.success && result.data) {
-          setRetailProducts(result.data.retailProducts || []);
+          setRetailProducts(result.data.retailProducts || []);   
           setWholesaleProducts(result.data.wholesaleProducts || []);
           if (result.data.retailOffer) setRetailOffer(result.data.retailOffer);
           if (result.data.wholesaleOffer) setWholesaleOffer(result.data.wholesaleOffer);
