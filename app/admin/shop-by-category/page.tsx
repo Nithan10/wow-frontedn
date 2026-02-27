@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, Save, Eye, Edit2, Loader2, RefreshCw, AlertCircle, CheckCircle, Image as ImageIcon, Type, Link, Layers } from 'lucide-react';
-// FIX: Added motion and AnimatePresence to the imports!
 import { motion, AnimatePresence } from 'framer-motion';
 import Layout from '../layout/layout';
 import axios from 'axios';
@@ -65,6 +64,12 @@ export default function ShopByCategoryAdminPage() {
     checkAuth();
     fetchConfig();
   }, []);
+
+  // Sync internal theme state with the local storage so the preview component reads it seamlessly
+  useEffect(() => {
+    localStorage.setItem('theme', theme);
+    window.dispatchEvent(new CustomEvent('themeChange', { detail: { theme } }));
+  }, [theme]);
 
   const checkAuth = () => setIsAuthenticated(!!localStorage.getItem('token'));
 
@@ -153,7 +158,7 @@ export default function ShopByCategoryAdminPage() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+      <div className="min-h-screen bg-gray-50 p-4 md:p-8 relative">
         
         {/* CUSTOM CONFIRMATION MODAL */}
         <AnimatePresence>
@@ -206,12 +211,13 @@ export default function ShopByCategoryAdminPage() {
               <option value="dark">Dark Theme</option>
               <option value="light">Light Theme</option>
             </select>
+            
             <div className="flex bg-gray-200 rounded-lg p-1">
-              <button onClick={() => setActiveTab('edit')} className={`px-4 py-2 rounded-lg text-sm font-medium flex gap-2 ${activeTab === 'edit' ? 'bg-white shadow' : 'text-gray-600'}`}><Edit2 size={16}/> Edit</button>
-              <button onClick={() => setActiveTab('preview')} className={`px-4 py-2 rounded-lg text-sm font-medium flex gap-2 ${activeTab === 'preview' ? 'bg-white shadow' : 'text-gray-600'}`}><Eye size={16}/> Preview</button>
+              <button onClick={() => setActiveTab('edit')} className={`px-4 py-2 rounded-lg text-sm font-medium flex gap-2 transition-colors ${activeTab === 'edit' ? 'bg-white shadow text-gray-900' : 'text-gray-600 hover:text-gray-800'}`}><Edit2 size={16}/> Edit</button>
+              <button onClick={() => setActiveTab('preview')} className={`px-4 py-2 rounded-lg text-sm font-medium flex gap-2 transition-colors ${activeTab === 'preview' ? 'bg-white shadow text-gray-900' : 'text-gray-600 hover:text-gray-800'}`}><Eye size={16}/> Preview</button>
             </div>
             
-            {isAuthenticated && (
+            {isAuthenticated && activeTab === 'edit' && (
               <>
                 <button 
                   onClick={handleResetClick} 
@@ -242,9 +248,25 @@ export default function ShopByCategoryAdminPage() {
           </div>
         )}
 
+        {/* PREVIEW TAB WITH SCROLLBAR REMOVAL */}
         {activeTab === 'preview' ? (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-            <ShopByCategorySection theme={theme} isPreview={true} previewData={items} />
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center text-sm text-gray-500 bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
+              <Eye size={16} className="mr-2 text-blue-500" /> 
+              <strong>Live Preview Mode</strong>
+              <span className="ml-auto text-xs bg-blue-50 text-blue-700 px-3 py-1 rounded-full font-medium border border-blue-100 hidden sm:inline-block">
+                Scroll independently (Scrollbar hidden)
+              </span>
+            </div>
+            
+            <div className={`w-full h-[80vh] min-h-[750px] rounded-2xl shadow-inner border p-0 sm:p-4 overflow-hidden relative transition-colors duration-500 ${
+              theme === 'dark' ? 'bg-neutral-950 border-gray-800' : 'bg-gray-200/50 border-gray-200'
+            }`}>
+               {/* Inner container specifically to allow scrolling while hiding the tracks */}
+               <div className="w-full h-full overflow-y-auto overflow-x-hidden no-scrollbar rounded-xl">
+                 <ShopByCategorySection theme={theme} isPreview={true} previewData={items} />
+               </div>
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -352,6 +374,19 @@ export default function ShopByCategoryAdminPage() {
           </div>
         )}
       </div>
+
+      {/* GLOBAL CSS TO FORCE HIDE SCROLLBARS ON PREVIEW */}
+      <style jsx global>{`
+        .no-scrollbar::-webkit-scrollbar { 
+          display: none !important; 
+          width: 0 !important; 
+          height: 0 !important; 
+        }
+        .no-scrollbar { 
+          -ms-overflow-style: none !important; 
+          scrollbar-width: none !important; 
+        }
+      `}</style>
     </Layout>
   );
 }
