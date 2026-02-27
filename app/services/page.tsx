@@ -114,8 +114,8 @@ export default function ServicesPage(props: any) {
 
       {!isPreview && <Navbar theme={theme} toggleTheme={toggleTheme} />}
 
-      <div className={`relative z-10 flex-grow ${isPreview ? 'py-12' : 'pt-24 pb-12'} px-4 md:px-8`}>
-        <div className="max-w-7xl mx-auto mb-12">
+      <div className={`relative z-10 flex-grow ${isPreview ? 'py-12' : 'pt-24 pb-12'} px-4 md:px-8 w-full`}>
+        <div className="max-w-7xl mx-auto mb-12 w-full">
           
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-12">
             <div className="space-y-4 w-full lg:w-auto">
@@ -167,10 +167,11 @@ export default function ServicesPage(props: any) {
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8">
+          {/* GRID LAYOUT - Added w-full to ensure it respects parent constraints */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full">
             
-            {/* PRODUCT LIST (Left Column) */}
-            <div className="lg:col-span-2">
+            {/* PRODUCT LIST (Left Column) - Added min-w-0 to prevent horizontal blowout */}
+            <div className="lg:col-span-2 min-w-0 w-full">
               <div className={`backdrop-blur-xl rounded-3xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.1)] border ${
                 isDarkMode ? 'bg-neutral-950/80 border-yellow-500/20' : 'bg-white border-yellow-400/30'
               }`}>
@@ -195,7 +196,7 @@ export default function ServicesPage(props: any) {
                   </div>
                 </div>
 
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto w-full">
                   <table className="w-full min-w-[600px]">
                     <thead className={`border-b ${isDarkMode ? 'bg-neutral-900/40 border-yellow-500/20' : 'bg-yellow-50/50 border-yellow-200'}`}>
                       <tr>
@@ -283,10 +284,10 @@ export default function ServicesPage(props: any) {
               </div>
             </div>
 
-            {/* GOLD THEMED OFFER CARD (Right Column) */}
-            <div className="lg:col-span-1">
+            {/* GOLD THEMED OFFER CARD (Right Column) - Added min-w-0 */}
+            <div className="lg:col-span-1 min-w-0 w-full">
               <AnimatePresence mode="wait">
-                <motion.div key={viewMode} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.4 }} className="h-full">
+                <motion.div key={viewMode} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.4 }} className="h-full w-full">
                   <div className={`rounded-3xl p-6 sm:p-8 h-full border relative overflow-hidden flex flex-col group ${
                     isDarkMode ? 'bg-neutral-950 border-yellow-500/30 shadow-[0_20px_50px_rgba(0,0,0,0.5)]' : 'bg-white border-yellow-400/50 shadow-[0_20px_50px_rgba(234,179,8,0.15)]'
                   }`}>
@@ -328,7 +329,10 @@ export default function ServicesPage(props: any) {
                           <div className={`w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0 rounded-xl border flex items-center justify-center ${
                             isDarkMode ? 'bg-yellow-500/10 border-yellow-500/20' : 'bg-yellow-100 border-yellow-200'
                           }`}><CheckCircle className={`w-4 h-4 sm:w-5 sm:h-5 ${isDarkMode ? 'text-yellow-500' : 'text-yellow-600'}`} /></div>
-                          <div><div className={`font-bold text-xs sm:text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{currentOffer.perk1?.title}</div><div className={`text-[10px] sm:text-xs font-medium mt-0.5 ${isDarkMode ? 'text-yellow-500/80' : 'text-yellow-700'}`}>{currentOffer.perk1?.desc}</div></div>
+                          <div className="min-w-0 flex-1">
+                            <div className={`font-bold text-xs sm:text-sm truncate ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{currentOffer.perk1?.title}</div>
+                            <div className={`text-[10px] sm:text-xs font-medium mt-0.5 truncate ${isDarkMode ? 'text-yellow-500/80' : 'text-yellow-700'}`}>{currentOffer.perk1?.desc}</div>
+                          </div>
                         </div>
                         <div className={`flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl transition-colors border ${
                           isDarkMode ? 'bg-white/5 border-white/10 hover:bg-white/10' : 'bg-yellow-50/50 border-yellow-100 hover:bg-yellow-100'
@@ -338,7 +342,10 @@ export default function ServicesPage(props: any) {
                           }`}>
                             {viewMode === 'retail' ? <Clock className={`w-4 h-4 sm:w-5 sm:h-5 ${isDarkMode ? 'text-yellow-500' : 'text-yellow-600'}`} /> : <Package className={`w-4 h-4 sm:w-5 sm:h-5 ${isDarkMode ? 'text-yellow-500' : 'text-yellow-600'}`} />}
                           </div>
-                          <div><div className={`font-bold text-xs sm:text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{currentOffer.perk2?.title}</div><div className={`text-[10px] sm:text-xs font-medium mt-0.5 ${isDarkMode ? 'text-yellow-500/80' : 'text-yellow-700'}`}>{currentOffer.perk2?.desc}</div></div>
+                          <div className="min-w-0 flex-1">
+                            <div className={`font-bold text-xs sm:text-sm truncate ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{currentOffer.perk2?.title}</div>
+                            <div className={`text-[10px] sm:text-xs font-medium mt-0.5 truncate ${isDarkMode ? 'text-yellow-500/80' : 'text-yellow-700'}`}>{currentOffer.perk2?.desc}</div>
+                          </div>
                         </div>
                         <div className={`flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl transition-colors border ${
                           isDarkMode ? 'bg-white/5 border-white/10 hover:bg-white/10' : 'bg-yellow-50/50 border-yellow-100 hover:bg-yellow-100'
@@ -348,7 +355,10 @@ export default function ServicesPage(props: any) {
                           }`}>
                             {viewMode === 'retail' ? <Gift className={`w-4 h-4 sm:w-5 sm:h-5 ${isDarkMode ? 'text-yellow-500' : 'text-yellow-600'}`} /> : <Users className={`w-4 h-4 sm:w-5 sm:h-5 ${isDarkMode ? 'text-yellow-500' : 'text-yellow-600'}`} />}
                           </div>
-                          <div><div className={`font-bold text-xs sm:text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{currentOffer.perk3?.title}</div><div className={`text-[10px] sm:text-xs font-medium mt-0.5 ${isDarkMode ? 'text-yellow-500/80' : 'text-yellow-700'}`}>{currentOffer.perk3?.desc}</div></div>
+                          <div className="min-w-0 flex-1">
+                            <div className={`font-bold text-xs sm:text-sm truncate ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{currentOffer.perk3?.title}</div>
+                            <div className={`text-[10px] sm:text-xs font-medium mt-0.5 truncate ${isDarkMode ? 'text-yellow-500/80' : 'text-yellow-700'}`}>{currentOffer.perk3?.desc}</div>
+                          </div>
                         </div>
                       </div>
 

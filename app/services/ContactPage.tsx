@@ -196,7 +196,7 @@ export default function ContactPage({ isOpen, onClose, isDarkMode, isPreview = f
         )}
 
         {/* Left side - Contact Info */}
-        <div className={`md:w-2/5 p-5 sm:p-6 md:p-8 border-b md:border-b-0 md:border-r md:overflow-y-auto no-scrollbar relative ${
+        <div className={`md:w-2/5 p-5 sm:p-6 md:p-8 border-b md:border-b-0 md:border-r md:overflow-y-auto no-scrollbar relative min-w-0 ${
           isDarkMode ? 'bg-gradient-to-br from-neutral-950 to-neutral-900 border-yellow-500/10 text-white' : 'bg-gradient-to-br from-yellow-50 to-amber-50 border-yellow-200 text-slate-900'
         }`}>
           <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_left,rgba(234,179,8,0.05),transparent_50%)] pointer-events-none"></div>
@@ -277,7 +277,7 @@ export default function ContactPage({ isOpen, onClose, isDarkMode, isPreview = f
         </div>
 
         {/* Right side - Contact Form */}
-        <div className={`md:w-3/5 p-5 sm:p-6 md:p-8 md:overflow-y-auto no-scrollbar relative ${isDarkMode ? 'bg-black' : 'bg-white'}`}>
+        <div className={`md:w-3/5 p-5 sm:p-6 md:p-8 md:overflow-y-auto no-scrollbar relative min-w-0 ${isDarkMode ? 'bg-black' : 'bg-white'}`}>
           <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6 relative z-10">
             <div>
               <label className={`block text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-1.5 sm:mb-2 ${isDarkMode ? 'text-yellow-600' : 'text-yellow-700'}`}>Your Name</label>
@@ -293,8 +293,8 @@ export default function ContactPage({ isOpen, onClose, isDarkMode, isPreview = f
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
-              <div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 w-full">
+              <div className="min-w-0">
                 <label className={`block text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-1.5 sm:mb-2 ${isDarkMode ? 'text-yellow-600' : 'text-yellow-700'}`}>Email Address</label>
                 <div className="relative group">
                   <Mail className={`absolute left-3.5 top-3.5 transition-colors ${isDarkMode ? 'text-yellow-600/50 group-focus-within:text-yellow-400' : 'text-yellow-600/40 group-focus-within:text-yellow-600'}`} size={18} />
@@ -307,7 +307,7 @@ export default function ContactPage({ isOpen, onClose, isDarkMode, isPreview = f
                   />
                 </div>
               </div>
-              <div>
+              <div className="min-w-0">
                 <label className={`block text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-1.5 sm:mb-2 ${isDarkMode ? 'text-yellow-600' : 'text-yellow-700'}`}>Phone Number</label>
                 <div className="relative group">
                   <Phone className={`absolute left-3.5 top-3.5 transition-colors ${isDarkMode ? 'text-yellow-600/50 group-focus-within:text-yellow-400' : 'text-yellow-600/40 group-focus-within:text-yellow-600'}`} size={18} />
