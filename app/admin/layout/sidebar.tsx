@@ -21,7 +21,7 @@ export default function Sidebar() {
         { name: 'Studio', icon: '📄', path: '/admin/StudioAdminPage' },
         { name: 'RalleyzSection', icon: '📄', path: '/admin/RalleyzSection' },
         { name: 'Characters', icon: '🦸', path: '/admin/characters' },
-        { name: 'Top Picks', icon: '⭐', path: '/admin/best-sellers' },
+        { name: 'Best Sellers', icon: '⭐', path: '/admin/best-sellers' },
         { name: 'Shop By Age', icon: '🧸', path: '/admin/shop-by-age' },
         { name: 'Categories', icon: '🛒', path: '/admin/shop-by-category' },
         { name: 'Best of WOW', icon: '🍱', path: '/admin/bento-grid' },
