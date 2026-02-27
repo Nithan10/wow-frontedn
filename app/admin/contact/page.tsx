@@ -1,12 +1,14 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Save, Eye, Edit2, Loader2, RefreshCw, AlertCircle, CheckCircle, MapPin, Phone, Mail, Clock, Type } from 'lucide-react';
+import { Save, Eye, Edit2, Loader2, RefreshCw, AlertCircle, CheckCircle, MapPin, Phone, Mail, Clock, Type, MessageSquare, Inbox } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Layout from '../layout/layout';
 import axios from 'axios';
 import ContactPage, { ContactData } from '../../../app/services/ContactPage'; 
 
+// FIX: Pointing to your local backend for testing!
+// Change port 5000 if your node server runs on a different port.
 const API_URL = "https://wow-lifebackend.onrender.com/api";
 
 const axiosInstance = axios.create({ baseURL: API_URL, headers: { 'Content-Type': 'application/json' } });
@@ -16,14 +18,27 @@ axiosInstance.interceptors.request.use((config) => {
   return config;
 });
 
+// Interface for submitted contact messages
+interface ContactMessage {
+  _id: string;
+  name: string;
+  email: string;
+  phone: string;
+  message: string;
+  createdAt: string;
+}
+
 export default function ContactAdminPage() {
-  const [activeTab, setActiveTab] = useState<'edit' | 'preview'>('edit');
+  const [activeTab, setActiveTab] = useState<'edit' | 'preview' | 'messages'>('edit');
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   
   const [data, setData] = useState<ContactData>({
     title: "", subtitle: "", email: "", phone: "", address: "",
     hoursWeekday: "", hoursSaturday: "", hoursSunday: ""
   });
+
+  const [messages, setMessages] = useState<ContactMessage[]>([]);
+  const [isLoadingMessages, setIsLoadingMessages] = useState(false);
 
   const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, title: '', message: '', action: () => {} });
   const [isLoading, setIsLoading] = useState(true);
@@ -40,14 +55,37 @@ export default function ContactAdminPage() {
   const fetchConfig = async () => {
     try {
       setIsLoading(true);
-      const res = await axios.get(`${API_URL}/contact`);
+      const res = await axiosInstance.get('/contact');
       if (res.data.success && res.data.data) {
         setData(res.data.data);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Failed to fetch config:", error);
+      setSaveStatus({ type: 'error', message: 'Failed to connect to backend server. Make sure it is running locally!' });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const fetchMessages = async () => {
+    try {
+      setIsLoadingMessages(true);
+      const res = await axiosInstance.get('/contact/messages');
+      if (res.data.success) {
+        setMessages(res.data.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch messages:", error);
+      setSaveStatus({ type: 'error', message: 'Failed to load messages from server.' });
+    } finally {
+      setIsLoadingMessages(false);
+    }
+  };
+
+  const handleTabChange = (tab: 'edit' | 'preview' | 'messages') => {
+    setActiveTab(tab);
+    if (tab === 'messages') {
+      fetchMessages();
     }
   };
 
@@ -61,7 +99,8 @@ export default function ContactAdminPage() {
         setTimeout(() => setSaveStatus({ type: '', message: '' }), 3000);
       }
     } catch (error) {
-      setSaveStatus({ type: 'error', message: 'Failed to save' });
+      console.error("Save error:", error);
+      setSaveStatus({ type: 'error', message: 'Failed to save. Is your backend running locally?' });
     } finally {
       setIsSaving(false);
     }
@@ -77,7 +116,7 @@ export default function ContactAdminPage() {
         setTimeout(() => setSaveStatus({ type: '', message: '' }), 3000);
       }
     } catch (error) {
-      setSaveStatus({ type: 'error', message: 'Failed to reset' });
+      setSaveStatus({ type: 'error', message: 'Failed to reset connection to server.' });
     } finally {
       setIsResetting(false);
     }
@@ -97,7 +136,7 @@ export default function ContactAdminPage() {
     setData(prev => ({ ...prev, [field]: value }));
   };
 
-  if (isLoading) return <Layout><div className="min-h-screen flex justify-center items-center"><Loader2 className="animate-spin text-yellow-500" size={40}/></div></Layout>;
+  if (isLoading) return <Layout><div className="min-h-screen flex flex-col justify-center items-center gap-4"><Loader2 className="animate-spin text-blue-500" size={40}/><p className="text-gray-500 font-medium">Connecting to Backend...</p></div></Layout>;
 
   return (
     <Layout>
@@ -123,27 +162,30 @@ export default function ContactAdminPage() {
           )}
         </AnimatePresence>
 
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Contact Page Manager</h1>
-            <p className="text-gray-500 text-sm">Manage business info and modal text</p>
+            <p className="text-gray-500 text-sm">Manage business info and view inquiries</p>
           </div>
-          <div className="flex gap-3">
-            <select value={theme} onChange={(e) => setTheme(e.target.value as 'dark'|'light')} className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white outline-none">
+          <div className="flex flex-wrap gap-3">
+            <select value={theme} onChange={(e) => setTheme(e.target.value as 'dark'|'light')} className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white outline-none hidden md:block">
               <option value="dark">Dark Theme</option>
               <option value="light">Light Theme</option>
             </select>
+            
             <div className="flex bg-gray-200 rounded-lg p-1 mr-2">
-              <button onClick={() => setActiveTab('edit')} className={`px-4 py-2 rounded-lg text-sm font-medium flex gap-2 ${activeTab === 'edit' ? 'bg-white shadow' : 'text-gray-600'}`}><Edit2 size={16}/> Edit</button>
-              <button onClick={() => setActiveTab('preview')} className={`px-4 py-2 rounded-lg text-sm font-medium flex gap-2 ${activeTab === 'preview' ? 'bg-white shadow' : 'text-gray-600'}`}><Eye size={16}/> Preview</button>
+              <button onClick={() => handleTabChange('edit')} className={`px-4 py-2 rounded-lg text-sm font-medium flex gap-2 ${activeTab === 'edit' ? 'bg-white shadow' : 'text-gray-600'}`}><Edit2 size={16}/> Edit</button>
+              <button onClick={() => handleTabChange('preview')} className={`px-4 py-2 rounded-lg text-sm font-medium flex gap-2 ${activeTab === 'preview' ? 'bg-white shadow' : 'text-gray-600'}`}><Eye size={16}/> Preview</button>
+              <button onClick={() => handleTabChange('messages')} className={`px-4 py-2 rounded-lg text-sm font-medium flex gap-2 ${activeTab === 'messages' ? 'bg-white shadow text-blue-600' : 'text-gray-600'}`}><Inbox size={16}/> Messages</button>
             </div>
-            {isAuthenticated && (
+
+            {isAuthenticated && activeTab === 'edit' && (
               <>
                 <button onClick={handleResetClick} disabled={isSaving || isResetting} className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg text-sm font-medium flex gap-2">
                   {isResetting ? <Loader2 size={16} className="animate-spin"/> : <RefreshCw size={16}/>} Reset
                 </button>
                 <button onClick={handleSave} disabled={isSaving || isResetting} className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium flex gap-2">
-                  {isSaving ? <Loader2 size={16} className="animate-spin"/> : <Save size={16}/>} Save Changes
+                  {isSaving ? <Loader2 size={16} className="animate-spin"/> : <Save size={16}/>} Save
                 </button>
               </>
             )}
@@ -157,13 +199,67 @@ export default function ContactAdminPage() {
           </div>
         )}
 
-        {activeTab === 'preview' ? (
+        {/* MESSAGES TAB */}
+        {activeTab === 'messages' && (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="p-6 border-b border-gray-100 flex justify-between items-center">
+              <h2 className="font-bold text-gray-800 text-lg flex items-center gap-2"><Inbox size={20} className="text-blue-500"/> Customer Inquiries</h2>
+              <button onClick={fetchMessages} className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1">
+                <RefreshCw size={14} className={isLoadingMessages ? 'animate-spin' : ''} /> Refresh
+              </button>
+            </div>
+            
+            <div className="overflow-x-auto">
+              {isLoadingMessages ? (
+                <div className="p-10 flex justify-center"><Loader2 className="animate-spin text-blue-500" size={30}/></div>
+              ) : messages.length === 0 ? (
+                <div className="p-10 text-center text-gray-500">No messages received yet.</div>
+              ) : (
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-gray-50 text-gray-600 text-sm border-b border-gray-100">
+                      <th className="p-4 font-medium">Date</th>
+                      <th className="p-4 font-medium">Name</th>
+                      <th className="p-4 font-medium">Contact</th>
+                      <th className="p-4 font-medium">Message</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {messages.map((msg) => (
+                      <tr key={msg._id} className="hover:bg-gray-50 transition-colors">
+                        <td className="p-4 text-sm text-gray-500 whitespace-nowrap">
+                          {new Date(msg.createdAt).toLocaleDateString()}
+                        </td>
+                        <td className="p-4 text-sm font-medium text-gray-900">{msg.name}</td>
+                        <td className="p-4 text-sm text-gray-600">
+                          <div>{msg.email}</div>
+                          <div className="text-gray-400 text-xs mt-1">{msg.phone}</div>
+                        </td>
+                        <td className="p-4 text-sm text-gray-700 max-w-md">
+                          <p className="truncate hover:whitespace-normal hover:bg-gray-100 p-1 rounded transition-all cursor-default">
+                            {msg.message}
+                          </p>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* PREVIEW TAB */}
+        {activeTab === 'preview' && (
           <div className={`rounded-xl shadow-sm border border-gray-100 p-8 flex justify-center ${theme === 'dark' ? 'bg-slate-800' : 'bg-gray-100'}`}>
              <div className="w-full max-w-5xl">
                <ContactPage isOpen={true} onClose={() => {}} isDarkMode={theme === 'dark'} isPreview={true} previewData={data} />
              </div>
           </div>
-        ) : (
+        )}
+
+        {/* EDIT TAB */}
+        {activeTab === 'edit' && (
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               
