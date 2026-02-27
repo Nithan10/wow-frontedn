@@ -21,14 +21,13 @@ const DEFAULT_WHOLESALE_OFFER = {
   buttonText: "APPLY 50% DISCOUNT", terms: "*Valid on orders above ₹5,00,000. Limited time offer."
 };
 
-// Use 'any' to bypass Next.js strict page prop validation while allowing Admin preview props
 export default function ServicesPage(props: any) {
   const isPreview = props.isPreview || false;
   const previewData = props.previewData || null;
 
   const [viewMode, setViewMode] = useState<'retail' | 'wholesale'>('retail');
   const [selectedProduct, setSelectedProduct] = useState<number>(0);
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark'); // Kept to pass to Navbar/Footer
   const [showContact, setShowContact] = useState(false);
 
   const [retailProducts, setRetailProducts] = useState<any[]>([]);
@@ -37,7 +36,6 @@ export default function ServicesPage(props: any) {
   const [wholesaleOffer, setWholesaleOffer] = useState(DEFAULT_WHOLESALE_OFFER);
   const [isLoading, setIsLoading] = useState(!isPreview);
 
-  const isDarkMode = theme === 'dark';
   const currentProducts = viewMode === 'retail' ? retailProducts : wholesaleProducts;
   const currentOffer = viewMode === 'retail' ? retailOffer : wholesaleOffer;
 
@@ -94,20 +92,24 @@ export default function ServicesPage(props: any) {
 
   if (isLoading) {
     return (
-      <div className={`min-h-screen flex justify-center items-center ${isDarkMode ? 'bg-slate-900' : 'bg-amber-50'}`}>
+      <div className="min-h-screen flex justify-center items-center bg-black">
         <Loader2 className="animate-spin text-yellow-500 w-12 h-12" />
       </div>
     );
   }
 
   return (
-    <div className={`relative min-h-screen flex flex-col transition-colors duration-500 overflow-x-hidden ${
-      isDarkMode ? 'bg-gradient-to-br from-slate-900 via-black to-slate-800 text-white' : 'bg-gradient-to-br from-amber-50 via-white to-yellow-50 text-slate-900'
-    }`}>
+    <div className="relative min-h-screen flex flex-col transition-colors duration-500 overflow-x-hidden bg-black text-white selection:bg-yellow-500/30 selection:text-yellow-200">
       
+      {/* Dynamic Gold Glow Background */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-[radial-gradient(circle,rgba(234,179,8,0.1)_0%,transparent_70%)] blur-3xl"></div>
+        <div className="absolute bottom-[-10%] right-[-5%] w-[40%] h-[60%] rounded-full bg-[radial-gradient(circle,rgba(212,175,55,0.08)_0%,transparent_70%)] blur-3xl"></div>
+      </div>
+
       {!isPreview && <Navbar theme={theme} toggleTheme={toggleTheme} />}
 
-      <div className={`flex-grow ${isPreview ? 'py-12' : 'pt-24 pb-12'} px-4 md:px-8`}>
+      <div className={`relative z-10 flex-grow ${isPreview ? 'py-12' : 'pt-24 pb-12'} px-4 md:px-8`}>
         <div className="max-w-7xl mx-auto mb-12">
           
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
@@ -115,119 +117,129 @@ export default function ServicesPage(props: any) {
               <div className="relative">
                 <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tighter mb-2 relative">
                   <span className="relative z-10">
-                    <span className={isDarkMode ? 'text-white' : 'text-slate-900'}>WOW</span>
-                    <span className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-amber-500 bg-clip-text text-transparent animate-gradient ml-3">LIFESTYLE</span>
+                    <span className="text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">WOW</span>
+                    <span className="bg-gradient-to-r from-[#D4AF37] via-[#FFD700] to-[#B8860B] bg-clip-text text-transparent animate-gradient ml-3 drop-shadow-[0_0_20px_rgba(234,179,8,0.3)]">LIFESTYLE</span>
                   </span>
                 </h1>
-                <div className="flex items-center gap-2 mt-2">
-                  <div className="w-4 h-4 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 animate-pulse" />
-                  <p className={`text-lg md:text-xl font-medium italic ${isDarkMode ? 'text-yellow-400' : 'text-amber-600'}`}>
+                <div className="flex items-center gap-3 mt-3">
+                  <div className="w-4 h-4 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 shadow-[0_0_10px_rgba(234,179,8,0.8)] animate-pulse" />
+                  <p className="text-lg md:text-xl font-semibold italic text-yellow-400/90 tracking-wide">
                     Just Looking Like a "WOW"
                   </p>
                 </div>
               </div>
-              <p className={`text-lg max-w-2xl ${isDarkMode ? 'text-yellow-400/80' : 'text-amber-700/80'}`}>
-                {viewMode === 'retail' ? "Premium toys for families and collectors" : "Bulk products for businesses and resellers"}
+              <p className="text-lg max-w-2xl text-gray-400 font-medium">
+                {viewMode === 'retail' ? "Premium luxury toys for families and exclusive collectors" : "High-margin bulk acquisitions for business partners"}
               </p>
             </div>
 
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-              {viewMode === 'retail' && !isPreview && (
-                <button onClick={() => setShowContact(true)} className={`px-6 py-3.5 rounded-lg font-bold transition-all flex items-center gap-3 shadow-lg hover:scale-105 group ${
-                  isDarkMode ? 'bg-gradient-to-r from-yellow-400 to-amber-500 text-black hover:from-yellow-500 hover:to-amber-600 shadow-yellow-500/30' : 'bg-gradient-to-r from-amber-500 to-yellow-500 text-white hover:from-amber-600 hover:to-yellow-600 shadow-amber-500/30'
-                }`}>
-                  <Phone size={18} className="group-hover:animate-pulse" /> 
-                  <span>CONTACT US</span>
+              {!isPreview && (
+                <button onClick={() => setShowContact(true)} className="px-6 py-3.5 rounded-xl font-black tracking-widest uppercase transition-all duration-300 flex items-center gap-3 bg-gradient-to-r from-yellow-600 via-yellow-400 to-yellow-600 bg-[length:200%_auto] hover:bg-[position:right_center] text-black shadow-[0_0_20px_rgba(234,179,8,0.2)] hover:scale-105 hover:shadow-[0_0_30px_rgba(234,179,8,0.4)] group">
+                  <Phone size={18} className="group-hover:animate-bounce" /> 
+                  <span>Contact Us</span>
                 </button>
               )}
 
-              <div className={`inline-flex p-1 backdrop-blur-sm rounded-xl shadow-lg ${
-                isDarkMode ? 'bg-slate-800/90 border border-yellow-500/30 shadow-yellow-500/20' : 'bg-white/90 border border-amber-300 shadow-amber-500/20'
-              }`}>
-                <button onClick={() => { setViewMode('retail'); setSelectedProduct(0); }} className={`relative px-8 py-3.5 rounded-lg text-sm font-bold transition-all duration-300 flex items-center gap-3 ${viewMode === 'retail' ? 'bg-gradient-to-r from-yellow-400 to-amber-500 text-black shadow-lg shadow-yellow-500/50' : isDarkMode ? 'text-yellow-400 hover:text-yellow-300' : 'text-amber-700 hover:text-amber-900'}`}>
-                  <ShoppingBag size={18} /> <span className="font-black tracking-wide">RETAIL</span>
+              <div className="inline-flex p-1.5 backdrop-blur-md rounded-xl shadow-2xl bg-neutral-950/80 border border-yellow-500/30">
+                <button onClick={() => { setViewMode('retail'); setSelectedProduct(0); }} className={`relative px-8 py-3 rounded-lg text-sm font-black tracking-widest uppercase transition-all duration-300 flex items-center gap-3 ${viewMode === 'retail' ? 'bg-gradient-to-r from-yellow-600 to-yellow-400 text-black shadow-[0_0_15px_rgba(234,179,8,0.3)]' : 'text-yellow-500/70 hover:text-yellow-400 hover:bg-white/5'}`}>
+                  <ShoppingBag size={18} /> <span>Retail</span>
                 </button>
-                <button onClick={() => { setViewMode('wholesale'); setSelectedProduct(0); }} className={`relative px-8 py-3.5 rounded-lg text-sm font-bold transition-all duration-300 flex items-center gap-3 ${viewMode === 'wholesale' ? 'bg-gradient-to-r from-yellow-400 to-amber-500 text-black shadow-lg shadow-yellow-500/50' : isDarkMode ? 'text-yellow-400 hover:text-yellow-300' : 'text-amber-700 hover:text-amber-900'}`}>
-                  <Building2 size={18} /> <span className="font-black tracking-wide">WHOLESALE</span>
+                <button onClick={() => { setViewMode('wholesale'); setSelectedProduct(0); }} className={`relative px-8 py-3 rounded-lg text-sm font-black tracking-widest uppercase transition-all duration-300 flex items-center gap-3 ${viewMode === 'wholesale' ? 'bg-gradient-to-r from-yellow-600 to-yellow-400 text-black shadow-[0_0_15px_rgba(234,179,8,0.3)]' : 'text-yellow-500/70 hover:text-yellow-400 hover:bg-white/5'}`}>
+                  <Building2 size={18} /> <span>Wholesale</span>
                 </button>
               </div>
             </div>
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
+            
+            {/* PRODUCT LIST (Left Column) */}
             <div className="lg:col-span-2">
-              <div className={`backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden ${isDarkMode ? 'bg-slate-900/95 shadow-yellow-500/10 border border-yellow-500/20' : 'bg-white/95 shadow-amber-500/10 border border-amber-200'}`}>
-                <div className={`p-8 border-b ${isDarkMode ? viewMode === 'retail' ? 'bg-gradient-to-r from-slate-800 to-slate-900 border-yellow-500/20' : 'bg-gradient-to-r from-slate-900 to-slate-800 border-yellow-500/20' : viewMode === 'retail' ? 'bg-gradient-to-r from-amber-50 to-yellow-50 border-amber-200' : 'bg-gradient-to-r from-yellow-50 to-amber-50 border-amber-200'}`}>
+              <div className="backdrop-blur-xl rounded-3xl overflow-hidden bg-neutral-950/80 border border-yellow-500/20 shadow-[0_8px_30px_rgb(0,0,0,0.5)]">
+                <div className="p-8 border-b border-yellow-500/20 bg-gradient-to-r from-neutral-900/50 to-neutral-950/50">
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className={`w-3 h-8 rounded-full ${viewMode === 'retail' ? 'bg-yellow-400' : 'bg-amber-500'}`} />
-                        <h2 className={`text-2xl font-black ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
-                          {viewMode === 'retail' ? 'RETAIL PRODUCTS' : 'WHOLESALE PRODUCTS'}
+                      <div className="flex items-center gap-4 mb-2">
+                        <div className="w-1.5 h-8 rounded-full bg-gradient-to-b from-yellow-300 to-yellow-600 shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
+                        <h2 className="text-2xl font-black tracking-widest text-white uppercase">
+                          {viewMode === 'retail' ? 'Retail Collection' : 'Wholesale Vault'}
                         </h2>
                       </div>
-                      <p className={`text-sm pl-6 ${isDarkMode ? 'text-yellow-400/80' : 'text-amber-700/80'}`}>
-                        {viewMode === 'retail' ? 'List of available products with exclusive pricing' : 'Bulk products with maximum profit margins'}
+                      <p className="text-sm pl-6 text-yellow-500/60 font-medium">
+                        {viewMode === 'retail' ? 'Curated selections with exclusive pricing' : 'Bulk acquisition catalog with maximum margins'}
                       </p>
                     </div>
-                    <div className={`flex items-center gap-2 px-4 py-2 rounded-full ${isDarkMode ? 'bg-slate-800 border border-yellow-500/30' : 'bg-white border border-amber-300'}`}>
-                      <span className={`text-sm font-bold ${isDarkMode ? 'text-yellow-400' : 'text-amber-700'}`}>{currentProducts.length} PRODUCTS</span>
+                    <div className="flex items-center gap-2 px-5 py-2 rounded-full bg-neutral-900 border border-yellow-500/30 shadow-inner">
+                      <span className="text-xs font-black tracking-widest text-yellow-400">{currentProducts.length} PRODUCTS</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="overflow-x-auto">
                   <table className="w-full">
-                    <thead className={isDarkMode ? 'bg-slate-800/50' : 'bg-amber-50/50'}>
+                    <thead className="bg-neutral-900/40 border-b border-yellow-500/20">
                       <tr>
-                        <th className={`text-left p-5 text-sm font-black uppercase tracking-wider ${isDarkMode ? 'text-yellow-400' : 'text-amber-800'}`}>PRODUCT</th>
-                        <th className={`text-left p-5 text-sm font-black uppercase tracking-wider ${isDarkMode ? 'text-yellow-400' : 'text-amber-800'}`}>CATEGORY</th>
-                        <th className={`text-left p-5 text-sm font-black uppercase tracking-wider ${isDarkMode ? 'text-yellow-400' : 'text-amber-800'}`}>PRICE</th>
+                        <th className="text-left p-5 text-xs font-black uppercase tracking-widest text-yellow-600/80">Product</th>
+                        <th className="text-left p-5 text-xs font-black uppercase tracking-widest text-yellow-600/80">Category</th>
+                        <th className="text-left p-5 text-xs font-black uppercase tracking-widest text-yellow-600/80">Price</th>
                         {viewMode === 'retail' ? (
                           <>
-                            <th className={`text-left p-5 text-sm font-black uppercase tracking-wider ${isDarkMode ? 'text-yellow-400' : 'text-amber-800'}`}>DISCOUNT</th>
-                            <th className={`text-left p-5 text-sm font-black uppercase tracking-wider ${isDarkMode ? 'text-yellow-400' : 'text-amber-800'}`}>STOCK</th>
+                            <th className="text-left p-5 text-xs font-black uppercase tracking-widest text-yellow-600/80">Discount</th>
+                            <th className="text-left p-5 text-xs font-black uppercase tracking-widest text-yellow-600/80">Status</th>
                           </>
                         ) : (
                           <>
-                            <th className={`text-left p-5 text-sm font-black uppercase tracking-wider ${isDarkMode ? 'text-yellow-400' : 'text-amber-800'}`}>MOQ</th>
-                            <th className={`text-left p-5 text-sm font-black uppercase tracking-wider ${isDarkMode ? 'text-yellow-400' : 'text-amber-800'}`}>MARGIN</th>
+                            <th className="text-left p-5 text-xs font-black uppercase tracking-widest text-yellow-600/80">MOQ</th>
+                            <th className="text-left p-5 text-xs font-black uppercase tracking-widest text-yellow-600/80">Margin</th>
                           </>
                         )}
                       </tr>
                     </thead>
-                    <tbody className={`divide-y ${isDarkMode ? 'divide-yellow-500/10' : 'divide-amber-100'}`}>
+                    <tbody className="divide-y divide-white/5">
                       {currentProducts.map((product, index) => (
-                        <tr key={product.id} className={`cursor-pointer transition-all duration-300 ${isDarkMode ? `hover:bg-yellow-500/5 ${selectedProduct === index ? 'bg-gradient-to-r from-yellow-500/10 to-amber-500/5 ring-1 ring-yellow-500/30' : ''}` : `hover:bg-amber-50/30 ${selectedProduct === index ? 'bg-gradient-to-r from-amber-50/60 to-yellow-50/40 ring-1 ring-amber-300' : ''}`}`} onClick={() => setSelectedProduct(index)}>
+                        <tr 
+                          key={product.id} 
+                          className={`cursor-pointer transition-all duration-300 ${
+                            selectedProduct === index 
+                              ? 'bg-gradient-to-r from-yellow-500/10 to-transparent border-l-4 border-l-yellow-400' 
+                              : 'hover:bg-white/5 border-l-4 border-l-transparent'
+                          }`} 
+                          onClick={() => setSelectedProduct(index)}
+                        >
                           <td className="p-5">
                             <div className="flex items-center gap-4">
-                              <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl shadow-lg ${viewMode === 'retail' ? 'bg-gradient-to-br from-yellow-400 to-amber-500' : 'bg-gradient-to-br from-amber-500 to-yellow-600'}`}>
+                              <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl bg-neutral-900 border border-yellow-500/20 shadow-lg group-hover:scale-110 transition-transform">
                                 {product.icon}
                               </div>
                               <div>
-                                <div className={`font-bold text-lg ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{product.name}</div>
-                                <div className="flex items-center gap-3 mt-1">
-                                  <span className={`text-xs px-2.5 py-1 rounded-full font-bold ${isDarkMode ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' : 'bg-amber-100 text-amber-800'}`}>⭐ {product.rating}</span>
-                                  <span className={`text-xs font-medium ${isDarkMode ? 'text-yellow-400/80' : 'text-amber-700/80'}`}>{viewMode === 'retail' ? `${product.sales || '0'} sold` : `${product.orders || '0'} orders`}</span>
+                                <div className="font-bold text-lg text-white tracking-wide">{product.name}</div>
+                                <div className="flex items-center gap-3 mt-1.5">
+                                  <span className="text-[10px] px-2.5 py-1 rounded-md font-bold bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">⭐ {product.rating}</span>
+                                  <span className="text-xs font-medium text-gray-500">{viewMode === 'retail' ? `${product.sales || '0'} sold` : `${product.orders || '0'} orders`}</span>
                                 </div>
                               </div>
                             </div>
                           </td>
-                          <td className="p-5"><span className={`text-sm font-medium px-3 py-1.5 rounded-lg ${isDarkMode ? 'text-yellow-400 bg-yellow-500/10 border border-yellow-500/20' : 'text-amber-800 bg-amber-50'}`}>{product.category}</span></td>
+                          <td className="p-5">
+                            <span className="text-xs font-bold tracking-widest uppercase px-3 py-1.5 rounded-lg text-yellow-500/80 bg-neutral-900 border border-white/10">
+                              {product.category}
+                            </span>
+                          </td>
                           <td className="p-5">
                             <div className="flex flex-col">
-                              <span className={`font-black text-xl ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{product.price}</span>
-                              {viewMode === 'retail' && product.originalPrice && <span className={`text-sm line-through font-medium ${isDarkMode ? 'text-yellow-400/50' : 'text-amber-600/70'}`}>{product.originalPrice}</span>}
+                              <span className="font-black text-xl text-yellow-400">{product.price}</span>
+                              {viewMode === 'retail' && product.originalPrice && <span className="text-xs line-through font-medium text-gray-500">{product.originalPrice}</span>}
                             </div>
                           </td>
                           {viewMode === 'retail' ? (
                             <>
-                              <td className="p-5"><span className={`text-lg font-black ${isDarkMode ? 'text-yellow-400' : 'text-red-600'}`}>{product.discount}</span></td>
-                              <td className="p-5"><span className={`text-sm font-bold ${product.stock === 'In Stock' ? 'text-green-400' : isDarkMode ? 'text-yellow-400' : 'text-amber-700'}`}>{product.stock}</span></td>
+                              <td className="p-5"><span className="text-base font-black text-green-400">{product.discount}</span></td>
+                              <td className="p-5"><span className={`text-xs font-bold tracking-widest uppercase ${product.stock === 'In Stock' ? 'text-yellow-400' : 'text-red-400'}`}>{product.stock}</span></td>
                             </>
                           ) : (
                             <>
-                              <td className="p-5"><span className={`text-sm font-bold ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>{product.moq}</span></td>
+                              <td className="p-5"><span className="text-sm font-bold text-white bg-neutral-800 px-3 py-1 rounded-lg">{product.moq}</span></td>
                               <td className="p-5"><span className="text-sm font-bold text-green-400">{product.margin}</span></td>
                             </>
                           )}
@@ -236,87 +248,89 @@ export default function ServicesPage(props: any) {
                     </tbody>
                   </table>
                   {currentProducts.length === 0 && (
-                    <div className="p-12 text-center text-gray-500 font-medium">No products available in this category yet.</div>
+                    <div className="p-16 text-center text-gray-500 font-medium border-t border-white/5">
+                      No exclusive products available in this category yet.
+                    </div>
                   )}
                 </div>
               </div>
             </div>
 
-            {/* GOLD THEMED OFFER CARD */}
+            {/* GOLD THEMED OFFER CARD (Right Column) */}
             <div className="lg:col-span-1">
               <AnimatePresence mode="wait">
-                <motion.div key={viewMode} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }} className="h-full">
-                  <div className={`rounded-2xl p-8 shadow-2xl text-black h-full border ${viewMode === 'retail' ? 'bg-gradient-to-br from-[#D4AF37] via-[#FFD700] to-[#B8860B] shadow-yellow-500/30 border-[#D4AF37]' : 'bg-gradient-to-br from-[#B8860B] via-[#D4AF37] to-[#8B7355] shadow-amber-900/30 border-[#B8860B]'}`}>
-                    <div className="flex flex-col h-full">
+                <motion.div key={viewMode} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.4 }} className="h-full">
+                  <div className="rounded-3xl p-8 shadow-[0_20px_50px_rgba(0,0,0,0.5)] h-full bg-neutral-950 border border-yellow-500/30 relative overflow-hidden flex flex-col group">
+                    
+                    {/* Background Accents */}
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-500/10 rounded-full blur-[80px] group-hover:bg-yellow-500/20 transition-colors duration-700"></div>
+                    <div className="absolute bottom-0 left-0 w-40 h-40 bg-amber-600/10 rounded-full blur-[60px]"></div>
+
+                    <div className="relative z-10 flex flex-col h-full">
                       {/* Badge */}
-                      <div className="flex items-center gap-2 mb-6">
-                        <div className="w-6 h-6 rounded-full bg-black/20 flex items-center justify-center">
+                      <div className="flex items-center gap-3 mb-8">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center shadow-[0_0_15px_rgba(234,179,8,0.4)]">
                           {viewMode === 'retail' ? <Crown className="w-4 h-4 text-black" /> : <TrendingUp className="w-4 h-4 text-black" />}
                         </div>
-                        <span className="text-sm font-black uppercase tracking-[0.3em] text-black/90">{currentOffer.badgeText}</span>
+                        <span className="text-xs font-black uppercase tracking-[0.25em] text-yellow-500">{currentOffer.badgeText}</span>
                       </div>
                       
                       {/* Main Offer Title */}
-                      <div className="mb-8 text-center">
-                        <div className="relative">
-                          <div className="text-8xl font-black mb-2 leading-none text-black">{currentOffer.discountPercentage}<span className="text-5xl">%</span></div>
-                          <div className="absolute -top-2 -right-2">
-                            {viewMode === 'retail' ? <Sparkles className="w-8 h-8 text-black/30" /> : <Zap className="w-8 h-8 text-black/30" />}
+                      <div className="mb-10 text-center">
+                        <div className="relative inline-block">
+                          <div className="text-7xl font-black mb-2 leading-none text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400 drop-shadow-lg">
+                            {currentOffer.discountPercentage}<span className="text-4xl text-yellow-500">%</span>
+                          </div>
+                          <div className="absolute -top-4 -right-6 animate-pulse">
+                            {viewMode === 'retail' ? <Sparkles className="w-8 h-8 text-yellow-400" /> : <Zap className="w-8 h-8 text-yellow-400" />}
                           </div>
                         </div>
-                        <div className="text-2xl font-black mb-2 tracking-tight text-black">{currentOffer.title}</div>
-                        <p className="text-black/80 text-sm font-medium">{currentOffer.description}</p>
+                        <div className="text-xl font-black mb-3 tracking-widest text-white uppercase mt-4">{currentOffer.title}</div>
+                        <p className="text-gray-400 text-sm font-medium px-4 leading-relaxed">{currentOffer.description}</p>
                       </div>
 
                       {/* Dynamic Perks */}
-                      <div className="space-y-4 mb-8">
-                        <div className="flex items-center gap-4 p-4 bg-black/10 rounded-xl backdrop-blur-sm">
-                          <div className="w-10 h-10 rounded-full bg-black/20 flex items-center justify-center"><CheckCircle className="w-5 h-5 text-black" /></div>
-                          <div><div className="font-bold text-black">{currentOffer.perk1?.title}</div><div className="text-sm text-black/90">{currentOffer.perk1?.desc}</div></div>
+                      <div className="space-y-3 mb-8">
+                        <div className="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-colors">
+                          <div className="w-10 h-10 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center"><CheckCircle className="w-5 h-5 text-yellow-500" /></div>
+                          <div><div className="font-bold text-white text-sm">{currentOffer.perk1?.title}</div><div className="text-xs text-yellow-500/80 font-medium mt-0.5">{currentOffer.perk1?.desc}</div></div>
                         </div>
-                        <div className="flex items-center gap-4 p-4 bg-black/10 rounded-xl backdrop-blur-sm">
-                          <div className="w-10 h-10 rounded-full bg-black/20 flex items-center justify-center">
-                            {viewMode === 'retail' ? <Clock className="w-5 h-5 text-black" /> : <Package className="w-5 h-5 text-black" />}
+                        <div className="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-colors">
+                          <div className="w-10 h-10 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center">
+                            {viewMode === 'retail' ? <Clock className="w-5 h-5 text-yellow-500" /> : <Package className="w-5 h-5 text-yellow-500" />}
                           </div>
-                          <div><div className="font-bold text-black">{currentOffer.perk2?.title}</div><div className="text-sm text-black/90">{currentOffer.perk2?.desc}</div></div>
+                          <div><div className="font-bold text-white text-sm">{currentOffer.perk2?.title}</div><div className="text-xs text-yellow-500/80 font-medium mt-0.5">{currentOffer.perk2?.desc}</div></div>
                         </div>
-                        <div className="flex items-center gap-4 p-4 bg-black/10 rounded-xl backdrop-blur-sm">
-                          <div className="w-10 h-10 rounded-full bg-black/20 flex items-center justify-center">
-                            {viewMode === 'retail' ? <Gift className="w-5 h-5 text-black" /> : <Users className="w-5 h-5 text-black" />}
+                        <div className="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-colors">
+                          <div className="w-10 h-10 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center">
+                            {viewMode === 'retail' ? <Gift className="w-5 h-5 text-yellow-500" /> : <Users className="w-5 h-5 text-yellow-500" />}
                           </div>
-                          <div><div className="font-bold text-black">{currentOffer.perk3?.title}</div><div className="text-sm text-black/90">{currentOffer.perk3?.desc}</div></div>
+                          <div><div className="font-bold text-white text-sm">{currentOffer.perk3?.title}</div><div className="text-xs text-yellow-500/80 font-medium mt-0.5">{currentOffer.perk3?.desc}</div></div>
                         </div>
                       </div>
 
                       {/* Selected Product Info */}
                       {currentProducts[selectedProduct] && (
-                        <div className="mt-6 p-4 bg-white/20 rounded-xl backdrop-blur-md border border-white/30">
-                          <div className="text-xs font-black uppercase tracking-widest mb-3 text-black/70">SELECTED PRODUCT</div>
-                          <div className="flex items-center justify-between text-black">
+                        <div className="mt-2 p-5 bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 rounded-2xl border border-yellow-500/20 mb-8">
+                          <div className="text-[10px] font-black uppercase tracking-[0.2em] mb-2 text-yellow-500/80">Selected Artifact</div>
+                          <div className="flex items-center justify-between text-white">
                             <div className="max-w-[60%]">
-                              <div className="font-bold text-lg truncate">{currentProducts[selectedProduct].name}</div>
-                              {viewMode === 'retail' && <div className="text-sm opacity-80">{currentProducts[selectedProduct].category}</div>}
+                              <div className="font-bold text-base truncate">{currentProducts[selectedProduct].name}</div>
                             </div>
                             <div className="text-right">
-                              <div className="text-2xl font-black">{currentProducts[selectedProduct].price}</div>
-                              {viewMode === 'retail' && currentProducts[selectedProduct].originalPrice && (
-                                <div className="text-sm line-through opacity-70">{currentProducts[selectedProduct].originalPrice}</div>
-                              )}
-                              {viewMode === 'wholesale' && (
-                                <div className="text-sm opacity-70 font-medium">MOQ: {currentProducts[selectedProduct].moq}</div>
-                              )}
+                              <div className="text-xl font-black text-yellow-400">{currentProducts[selectedProduct].price}</div>
                             </div>
                           </div>
                         </div>
                       )}
 
-                      {/* CTA Button - Solid Dark for contrast against Gold */}
-                      <button className="mt-auto w-full py-4 bg-black text-[#D4AF37] font-black rounded-xl hover:bg-slate-900 transition-all flex items-center justify-center gap-3 group shadow-xl hover:scale-[1.02]">
+                      {/* CTA Button */}
+                      <button className="mt-auto w-full py-4 bg-gradient-to-r from-yellow-600 via-yellow-400 to-yellow-600 bg-[length:200%_auto] hover:bg-[position:right_center] text-black font-black tracking-widest uppercase rounded-xl transition-all duration-300 flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:shadow-[0_0_30px_rgba(234,179,8,0.5)] hover:scale-[1.02] active:scale-[0.98]">
                         {viewMode === 'retail' ? <Sparkles className="w-5 h-5" /> : <Zap className="w-5 h-5" />} 
                         {currentOffer.buttonText} 
-                        <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
+                        <ArrowRight className="w-4 h-4" />
                       </button>
-                      <div className="text-xs text-center text-black/60 mt-4 font-medium italic">
+                      <div className="text-[10px] text-center text-gray-500 mt-4 font-medium uppercase tracking-widest">
                         {currentOffer.terms}
                       </div>
                     </div>
@@ -327,7 +341,8 @@ export default function ServicesPage(props: any) {
           </div>
         </div>
 
-        {!isPreview && <ContactPage isOpen={showContact} onClose={() => setShowContact(false)} isDarkMode={isDarkMode} />}
+        {/* Contact Modal (Preserved logic) */}
+        {!isPreview && <ContactPage isOpen={showContact} onClose={() => setShowContact(false)} isDarkMode={true} />}
       </div>
 
       <style jsx global>{`

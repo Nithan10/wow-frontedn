@@ -33,7 +33,7 @@ const DEFAULT_WHOLESALE_OFFER = {
 export default function ServicesAdminPage() {
   const [activeTab, setActiveTab] = useState<'edit' | 'preview'>('edit');
   const [editMode, setEditMode] = useState<'retail' | 'wholesale'>('retail');
-  const [leftMode, setLeftMode] = useState<'products' | 'offer'>('products'); // Toggle left column
+  const [leftMode, setLeftMode] = useState<'products' | 'offer'>('products'); 
   
   const [data, setData] = useState({ 
     retailProducts: [], 
@@ -42,7 +42,6 @@ export default function ServicesAdminPage() {
     wholesaleOffer: DEFAULT_WHOLESALE_OFFER
   });
   
-  // Custom Confirmation Modal State
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
     title: '',
@@ -56,7 +55,6 @@ export default function ServicesAdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [saveStatus, setSaveStatus] = useState({ type: '', message: '' });
 
-  // Shared Form State
   const [newName, setNewName] = useState('');
   const [newCat, setNewCat] = useState('');
   const [newPrice, setNewPrice] = useState('');
@@ -89,7 +87,7 @@ export default function ServicesAdminPage() {
         });
       }
     } catch (error) {
-      console.error(error);
+      console.error("Failed to fetch config:", error);
     } finally {
       setIsLoading(false);
     }
@@ -267,8 +265,9 @@ export default function ServicesAdminPage() {
           </div>
         )}
 
+        {/* Updated Preview Tab matching the Black & Gold aesthetic wrapper */}
         {activeTab === 'preview' ? (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden relative" style={{ minHeight: '800px' }}>
+          <div className="bg-black rounded-xl shadow-sm border border-yellow-500/20 overflow-hidden relative" style={{ minHeight: '800px' }}>
              <ServicesPage isPreview={true} previewData={data} />
           </div>
         ) : (
