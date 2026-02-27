@@ -27,7 +27,7 @@ export default function ServicesPage(props: any) {
 
   const [viewMode, setViewMode] = useState<'retail' | 'wholesale'>('retail');
   const [selectedProduct, setSelectedProduct] = useState<number>(0);
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark'); // Kept to pass to Navbar/Footer
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [showContact, setShowContact] = useState(false);
 
   const [retailProducts, setRetailProducts] = useState<any[]>([]);
@@ -36,6 +36,7 @@ export default function ServicesPage(props: any) {
   const [wholesaleOffer, setWholesaleOffer] = useState(DEFAULT_WHOLESALE_OFFER);
   const [isLoading, setIsLoading] = useState(!isPreview);
 
+  const isDarkMode = theme === 'dark';
   const currentProducts = viewMode === 'retail' ? retailProducts : wholesaleProducts;
   const currentOffer = viewMode === 'retail' ? retailOffer : wholesaleOffer;
 
@@ -92,19 +93,23 @@ export default function ServicesPage(props: any) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex justify-center items-center bg-black">
+      <div className={`min-h-screen flex justify-center items-center ${isDarkMode ? 'bg-black' : 'bg-slate-50'}`}>
         <Loader2 className="animate-spin text-yellow-500 w-12 h-12" />
       </div>
     );
   }
 
   return (
-    <div className="relative min-h-screen flex flex-col transition-colors duration-500 overflow-x-hidden bg-black text-white selection:bg-yellow-500/30 selection:text-yellow-200">
+    <div className={`relative min-h-screen flex flex-col transition-colors duration-500 overflow-x-hidden ${
+      isDarkMode 
+        ? 'bg-black text-white selection:bg-yellow-500/30 selection:text-yellow-200' 
+        : 'bg-slate-50 text-slate-900 selection:bg-yellow-500/30 selection:text-yellow-900'
+    }`}>
       
       {/* Dynamic Gold Glow Background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-[radial-gradient(circle,rgba(234,179,8,0.1)_0%,transparent_70%)] blur-3xl"></div>
-        <div className="absolute bottom-[-10%] right-[-5%] w-[40%] h-[60%] rounded-full bg-[radial-gradient(circle,rgba(212,175,55,0.08)_0%,transparent_70%)] blur-3xl"></div>
+        <div className={`absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full blur-3xl ${isDarkMode ? 'bg-[radial-gradient(circle,rgba(234,179,8,0.1)_0%,transparent_70%)]' : 'bg-[radial-gradient(circle,rgba(234,179,8,0.15)_0%,transparent_70%)]'}`}></div>
+        <div className={`absolute bottom-[-10%] right-[-5%] w-[40%] h-[60%] rounded-full blur-3xl ${isDarkMode ? 'bg-[radial-gradient(circle,rgba(212,175,55,0.08)_0%,transparent_70%)]' : 'bg-[radial-gradient(circle,rgba(212,175,55,0.15)_0%,transparent_70%)]'}`}></div>
       </div>
 
       {!isPreview && <Navbar theme={theme} toggleTheme={toggleTheme} />}
@@ -117,18 +122,18 @@ export default function ServicesPage(props: any) {
               <div className="relative">
                 <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tighter mb-2 relative">
                   <span className="relative z-10">
-                    <span className="text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">WOW</span>
-                    <span className="bg-gradient-to-r from-[#D4AF37] via-[#FFD700] to-[#B8860B] bg-clip-text text-transparent animate-gradient ml-3 drop-shadow-[0_0_20px_rgba(234,179,8,0.3)]">LIFESTYLE</span>
+                    <span className={isDarkMode ? 'text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]' : 'text-slate-900 drop-shadow-sm'}>WOW</span>
+                    <span className={`bg-gradient-to-r from-[#D4AF37] via-[#FFD700] to-[#B8860B] bg-clip-text text-transparent animate-gradient ml-3 ${isDarkMode ? 'drop-shadow-[0_0_20px_rgba(234,179,8,0.3)]' : ''}`}>LIFESTYLE</span>
                   </span>
                 </h1>
                 <div className="flex items-center gap-3 mt-3">
                   <div className="w-4 h-4 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 shadow-[0_0_10px_rgba(234,179,8,0.8)] animate-pulse" />
-                  <p className="text-lg md:text-xl font-semibold italic text-yellow-400/90 tracking-wide">
+                  <p className={`text-lg md:text-xl font-semibold italic tracking-wide ${isDarkMode ? 'text-yellow-400/90' : 'text-yellow-600'}`}>
                     Just Looking Like a "WOW"
                   </p>
                 </div>
               </div>
-              <p className="text-lg max-w-2xl text-gray-400 font-medium">
+              <p className={`text-lg max-w-2xl font-medium ${isDarkMode ? 'text-gray-400' : 'text-slate-600'}`}>
                 {viewMode === 'retail' ? "Premium luxury toys for families and exclusive collectors" : "High-margin bulk acquisitions for business partners"}
               </p>
             </div>
@@ -141,11 +146,21 @@ export default function ServicesPage(props: any) {
                 </button>
               )}
 
-              <div className="inline-flex p-1.5 backdrop-blur-md rounded-xl shadow-2xl bg-neutral-950/80 border border-yellow-500/30">
-                <button onClick={() => { setViewMode('retail'); setSelectedProduct(0); }} className={`relative px-8 py-3 rounded-lg text-sm font-black tracking-widest uppercase transition-all duration-300 flex items-center gap-3 ${viewMode === 'retail' ? 'bg-gradient-to-r from-yellow-600 to-yellow-400 text-black shadow-[0_0_15px_rgba(234,179,8,0.3)]' : 'text-yellow-500/70 hover:text-yellow-400 hover:bg-white/5'}`}>
+              <div className={`inline-flex p-1.5 backdrop-blur-md rounded-xl shadow-2xl border ${
+                isDarkMode ? 'bg-neutral-950/80 border-yellow-500/30' : 'bg-white/80 border-yellow-400/50'
+              }`}>
+                <button onClick={() => { setViewMode('retail'); setSelectedProduct(0); }} className={`relative px-8 py-3 rounded-lg text-sm font-black tracking-widest uppercase transition-all duration-300 flex items-center gap-3 ${
+                  viewMode === 'retail' 
+                    ? 'bg-gradient-to-r from-yellow-600 to-yellow-400 text-black shadow-[0_0_15px_rgba(234,179,8,0.3)]' 
+                    : isDarkMode ? 'text-yellow-500/70 hover:text-yellow-400 hover:bg-white/5' : 'text-yellow-700/70 hover:text-yellow-600 hover:bg-black/5'
+                }`}>
                   <ShoppingBag size={18} /> <span>Retail</span>
                 </button>
-                <button onClick={() => { setViewMode('wholesale'); setSelectedProduct(0); }} className={`relative px-8 py-3 rounded-lg text-sm font-black tracking-widest uppercase transition-all duration-300 flex items-center gap-3 ${viewMode === 'wholesale' ? 'bg-gradient-to-r from-yellow-600 to-yellow-400 text-black shadow-[0_0_15px_rgba(234,179,8,0.3)]' : 'text-yellow-500/70 hover:text-yellow-400 hover:bg-white/5'}`}>
+                <button onClick={() => { setViewMode('wholesale'); setSelectedProduct(0); }} className={`relative px-8 py-3 rounded-lg text-sm font-black tracking-widest uppercase transition-all duration-300 flex items-center gap-3 ${
+                  viewMode === 'wholesale' 
+                    ? 'bg-gradient-to-r from-yellow-600 to-yellow-400 text-black shadow-[0_0_15px_rgba(234,179,8,0.3)]' 
+                    : isDarkMode ? 'text-yellow-500/70 hover:text-yellow-400 hover:bg-white/5' : 'text-yellow-700/70 hover:text-yellow-600 hover:bg-black/5'
+                }`}>
                   <Building2 size={18} /> <span>Wholesale</span>
                 </button>
               </div>
@@ -156,91 +171,105 @@ export default function ServicesPage(props: any) {
             
             {/* PRODUCT LIST (Left Column) */}
             <div className="lg:col-span-2">
-              <div className="backdrop-blur-xl rounded-3xl overflow-hidden bg-neutral-950/80 border border-yellow-500/20 shadow-[0_8px_30px_rgb(0,0,0,0.5)]">
-                <div className="p-8 border-b border-yellow-500/20 bg-gradient-to-r from-neutral-900/50 to-neutral-950/50">
+              <div className={`backdrop-blur-xl rounded-3xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.1)] border ${
+                isDarkMode ? 'bg-neutral-950/80 border-yellow-500/20' : 'bg-white border-yellow-400/30'
+              }`}>
+                <div className={`p-8 border-b ${
+                  isDarkMode ? 'bg-gradient-to-r from-neutral-900/50 to-neutral-950/50 border-yellow-500/20' : 'bg-gradient-to-r from-yellow-50 to-white border-yellow-400/30'
+                }`}>
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="flex items-center gap-4 mb-2">
                         <div className="w-1.5 h-8 rounded-full bg-gradient-to-b from-yellow-300 to-yellow-600 shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
-                        <h2 className="text-2xl font-black tracking-widest text-white uppercase">
+                        <h2 className={`text-2xl font-black tracking-widest uppercase ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
                           {viewMode === 'retail' ? 'Retail Collection' : 'Wholesale Vault'}
                         </h2>
                       </div>
-                      <p className="text-sm pl-6 text-yellow-500/60 font-medium">
+                      <p className={`text-sm pl-6 font-medium ${isDarkMode ? 'text-yellow-500/60' : 'text-yellow-700/70'}`}>
                         {viewMode === 'retail' ? 'Curated selections with exclusive pricing' : 'Bulk acquisition catalog with maximum margins'}
                       </p>
                     </div>
-                    <div className="flex items-center gap-2 px-5 py-2 rounded-full bg-neutral-900 border border-yellow-500/30 shadow-inner">
-                      <span className="text-xs font-black tracking-widest text-yellow-400">{currentProducts.length} PRODUCTS</span>
+                    <div className={`flex items-center gap-2 px-5 py-2 rounded-full border shadow-inner ${
+                      isDarkMode ? 'bg-neutral-900 border-yellow-500/30' : 'bg-yellow-50/50 border-yellow-300'
+                    }`}>
+                      <span className={`text-xs font-black tracking-widest ${isDarkMode ? 'text-yellow-400' : 'text-yellow-700'}`}>{currentProducts.length} PRODUCTS</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="overflow-x-auto">
                   <table className="w-full">
-                    <thead className="bg-neutral-900/40 border-b border-yellow-500/20">
+                    <thead className={`border-b ${isDarkMode ? 'bg-neutral-900/40 border-yellow-500/20' : 'bg-yellow-50/50 border-yellow-200'}`}>
                       <tr>
-                        <th className="text-left p-5 text-xs font-black uppercase tracking-widest text-yellow-600/80">Product</th>
-                        <th className="text-left p-5 text-xs font-black uppercase tracking-widest text-yellow-600/80">Category</th>
-                        <th className="text-left p-5 text-xs font-black uppercase tracking-widest text-yellow-600/80">Price</th>
+                        <th className={`text-left p-5 text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-yellow-600/80' : 'text-yellow-700'}`}>Product</th>
+                        <th className={`text-left p-5 text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-yellow-600/80' : 'text-yellow-700'}`}>Category</th>
+                        <th className={`text-left p-5 text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-yellow-600/80' : 'text-yellow-700'}`}>Price</th>
                         {viewMode === 'retail' ? (
                           <>
-                            <th className="text-left p-5 text-xs font-black uppercase tracking-widest text-yellow-600/80">Discount</th>
-                            <th className="text-left p-5 text-xs font-black uppercase tracking-widest text-yellow-600/80">Status</th>
+                            <th className={`text-left p-5 text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-yellow-600/80' : 'text-yellow-700'}`}>Discount</th>
+                            <th className={`text-left p-5 text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-yellow-600/80' : 'text-yellow-700'}`}>Status</th>
                           </>
                         ) : (
                           <>
-                            <th className="text-left p-5 text-xs font-black uppercase tracking-widest text-yellow-600/80">MOQ</th>
-                            <th className="text-left p-5 text-xs font-black uppercase tracking-widest text-yellow-600/80">Margin</th>
+                            <th className={`text-left p-5 text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-yellow-600/80' : 'text-yellow-700'}`}>MOQ</th>
+                            <th className={`text-left p-5 text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-yellow-600/80' : 'text-yellow-700'}`}>Margin</th>
                           </>
                         )}
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/5">
+                    <tbody className={`divide-y ${isDarkMode ? 'divide-white/5' : 'divide-slate-100'}`}>
                       {currentProducts.map((product, index) => (
                         <tr 
                           key={product.id} 
-                          className={`cursor-pointer transition-all duration-300 ${
+                          className={`cursor-pointer transition-all duration-300 border-l-4 ${
                             selectedProduct === index 
-                              ? 'bg-gradient-to-r from-yellow-500/10 to-transparent border-l-4 border-l-yellow-400' 
-                              : 'hover:bg-white/5 border-l-4 border-l-transparent'
+                              ? `bg-gradient-to-r from-yellow-500/10 to-transparent ${isDarkMode ? 'border-l-yellow-400' : 'border-l-yellow-500'}`
+                              : `border-l-transparent ${isDarkMode ? 'hover:bg-white/5' : 'hover:bg-yellow-50/50'}`
                           }`} 
                           onClick={() => setSelectedProduct(index)}
                         >
                           <td className="p-5">
                             <div className="flex items-center gap-4">
-                              <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl bg-neutral-900 border border-yellow-500/20 shadow-lg group-hover:scale-110 transition-transform">
+                              <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl border shadow-lg group-hover:scale-110 transition-transform ${
+                                isDarkMode ? 'bg-neutral-900 border-yellow-500/20' : 'bg-yellow-50 border-yellow-200'
+                              }`}>
                                 {product.icon}
                               </div>
                               <div>
-                                <div className="font-bold text-lg text-white tracking-wide">{product.name}</div>
+                                <div className={`font-bold text-lg tracking-wide ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{product.name}</div>
                                 <div className="flex items-center gap-3 mt-1.5">
-                                  <span className="text-[10px] px-2.5 py-1 rounded-md font-bold bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">⭐ {product.rating}</span>
-                                  <span className="text-xs font-medium text-gray-500">{viewMode === 'retail' ? `${product.sales || '0'} sold` : `${product.orders || '0'} orders`}</span>
+                                  <span className={`text-[10px] px-2.5 py-1 rounded-md font-bold border ${
+                                    isDarkMode ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20' : 'bg-yellow-100 text-yellow-800 border-yellow-200'
+                                  }`}>⭐ {product.rating}</span>
+                                  <span className={`text-xs font-medium ${isDarkMode ? 'text-gray-500' : 'text-slate-500'}`}>
+                                    {viewMode === 'retail' ? `${product.sales || '0'} sold` : `${product.orders || '0'} orders`}
+                                  </span>
                                 </div>
                               </div>
                             </div>
                           </td>
                           <td className="p-5">
-                            <span className="text-xs font-bold tracking-widest uppercase px-3 py-1.5 rounded-lg text-yellow-500/80 bg-neutral-900 border border-white/10">
+                            <span className={`text-xs font-bold tracking-widest uppercase px-3 py-1.5 rounded-lg border ${
+                              isDarkMode ? 'text-yellow-500/80 bg-neutral-900 border-white/10' : 'text-yellow-700 bg-yellow-50 border-yellow-200'
+                            }`}>
                               {product.category}
                             </span>
                           </td>
                           <td className="p-5">
                             <div className="flex flex-col">
-                              <span className="font-black text-xl text-yellow-400">{product.price}</span>
-                              {viewMode === 'retail' && product.originalPrice && <span className="text-xs line-through font-medium text-gray-500">{product.originalPrice}</span>}
+                              <span className={`font-black text-xl ${isDarkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>{product.price}</span>
+                              {viewMode === 'retail' && product.originalPrice && <span className={`text-xs line-through font-medium ${isDarkMode ? 'text-gray-500' : 'text-slate-400'}`}>{product.originalPrice}</span>}
                             </div>
                           </td>
                           {viewMode === 'retail' ? (
                             <>
-                              <td className="p-5"><span className="text-base font-black text-green-400">{product.discount}</span></td>
-                              <td className="p-5"><span className={`text-xs font-bold tracking-widest uppercase ${product.stock === 'In Stock' ? 'text-yellow-400' : 'text-red-400'}`}>{product.stock}</span></td>
+                              <td className="p-5"><span className="text-base font-black text-green-500">{product.discount}</span></td>
+                              <td className="p-5"><span className={`text-xs font-bold tracking-widest uppercase ${product.stock === 'In Stock' ? (isDarkMode ? 'text-yellow-400' : 'text-yellow-600') : 'text-red-500'}`}>{product.stock}</span></td>
                             </>
                           ) : (
                             <>
-                              <td className="p-5"><span className="text-sm font-bold text-white bg-neutral-800 px-3 py-1 rounded-lg">{product.moq}</span></td>
-                              <td className="p-5"><span className="text-sm font-bold text-green-400">{product.margin}</span></td>
+                              <td className="p-5"><span className={`text-sm font-bold px-3 py-1 rounded-lg ${isDarkMode ? 'text-white bg-neutral-800' : 'text-slate-800 bg-slate-100'}`}>{product.moq}</span></td>
+                              <td className="p-5"><span className="text-sm font-bold text-green-500">{product.margin}</span></td>
                             </>
                           )}
                         </tr>
@@ -248,7 +277,7 @@ export default function ServicesPage(props: any) {
                     </tbody>
                   </table>
                   {currentProducts.length === 0 && (
-                    <div className="p-16 text-center text-gray-500 font-medium border-t border-white/5">
+                    <div className={`p-16 text-center font-medium border-t ${isDarkMode ? 'text-gray-500 border-white/5' : 'text-slate-400 border-slate-100'}`}>
                       No exclusive products available in this category yet.
                     </div>
                   )}
@@ -260,11 +289,13 @@ export default function ServicesPage(props: any) {
             <div className="lg:col-span-1">
               <AnimatePresence mode="wait">
                 <motion.div key={viewMode} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.4 }} className="h-full">
-                  <div className="rounded-3xl p-8 shadow-[0_20px_50px_rgba(0,0,0,0.5)] h-full bg-neutral-950 border border-yellow-500/30 relative overflow-hidden flex flex-col group">
+                  <div className={`rounded-3xl p-8 h-full border relative overflow-hidden flex flex-col group ${
+                    isDarkMode ? 'bg-neutral-950 border-yellow-500/30 shadow-[0_20px_50px_rgba(0,0,0,0.5)]' : 'bg-white border-yellow-400/50 shadow-[0_20px_50px_rgba(234,179,8,0.15)]'
+                  }`}>
                     
                     {/* Background Accents */}
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-500/10 rounded-full blur-[80px] group-hover:bg-yellow-500/20 transition-colors duration-700"></div>
-                    <div className="absolute bottom-0 left-0 w-40 h-40 bg-amber-600/10 rounded-full blur-[60px]"></div>
+                    <div className={`absolute top-0 right-0 w-64 h-64 rounded-full blur-[80px] transition-colors duration-700 ${isDarkMode ? 'bg-yellow-500/10 group-hover:bg-yellow-500/20' : 'bg-yellow-300/30 group-hover:bg-yellow-400/30'}`}></div>
+                    <div className={`absolute bottom-0 left-0 w-40 h-40 rounded-full blur-[60px] ${isDarkMode ? 'bg-amber-600/10' : 'bg-amber-500/20'}`}></div>
 
                     <div className="relative z-10 flex flex-col h-full">
                       {/* Badge */}
@@ -272,53 +303,69 @@ export default function ServicesPage(props: any) {
                         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center shadow-[0_0_15px_rgba(234,179,8,0.4)]">
                           {viewMode === 'retail' ? <Crown className="w-4 h-4 text-black" /> : <TrendingUp className="w-4 h-4 text-black" />}
                         </div>
-                        <span className="text-xs font-black uppercase tracking-[0.25em] text-yellow-500">{currentOffer.badgeText}</span>
+                        <span className="text-xs font-black uppercase tracking-[0.25em] text-yellow-600">{currentOffer.badgeText}</span>
                       </div>
                       
                       {/* Main Offer Title */}
                       <div className="mb-10 text-center">
                         <div className="relative inline-block">
-                          <div className="text-7xl font-black mb-2 leading-none text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400 drop-shadow-lg">
+                          <div className={`text-7xl font-black mb-2 leading-none text-transparent bg-clip-text drop-shadow-lg ${
+                            isDarkMode ? 'bg-gradient-to-b from-white to-gray-400' : 'bg-gradient-to-b from-slate-900 to-slate-500'
+                          }`}>
                             {currentOffer.discountPercentage}<span className="text-4xl text-yellow-500">%</span>
                           </div>
                           <div className="absolute -top-4 -right-6 animate-pulse">
                             {viewMode === 'retail' ? <Sparkles className="w-8 h-8 text-yellow-400" /> : <Zap className="w-8 h-8 text-yellow-400" />}
                           </div>
                         </div>
-                        <div className="text-xl font-black mb-3 tracking-widest text-white uppercase mt-4">{currentOffer.title}</div>
-                        <p className="text-gray-400 text-sm font-medium px-4 leading-relaxed">{currentOffer.description}</p>
+                        <div className={`text-xl font-black mb-3 tracking-widest uppercase mt-4 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{currentOffer.title}</div>
+                        <p className={`text-sm font-medium px-4 leading-relaxed ${isDarkMode ? 'text-gray-400' : 'text-slate-600'}`}>{currentOffer.description}</p>
                       </div>
 
                       {/* Dynamic Perks */}
                       <div className="space-y-3 mb-8">
-                        <div className="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-colors">
-                          <div className="w-10 h-10 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center"><CheckCircle className="w-5 h-5 text-yellow-500" /></div>
-                          <div><div className="font-bold text-white text-sm">{currentOffer.perk1?.title}</div><div className="text-xs text-yellow-500/80 font-medium mt-0.5">{currentOffer.perk1?.desc}</div></div>
+                        <div className={`flex items-center gap-4 p-4 rounded-2xl transition-colors border ${
+                          isDarkMode ? 'bg-white/5 border-white/10 hover:bg-white/10' : 'bg-yellow-50/50 border-yellow-100 hover:bg-yellow-100'
+                        }`}>
+                          <div className={`w-10 h-10 rounded-xl border flex items-center justify-center ${
+                            isDarkMode ? 'bg-yellow-500/10 border-yellow-500/20' : 'bg-yellow-100 border-yellow-200'
+                          }`}><CheckCircle className={`w-5 h-5 ${isDarkMode ? 'text-yellow-500' : 'text-yellow-600'}`} /></div>
+                          <div><div className={`font-bold text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{currentOffer.perk1?.title}</div><div className={`text-xs font-medium mt-0.5 ${isDarkMode ? 'text-yellow-500/80' : 'text-yellow-700'}`}>{currentOffer.perk1?.desc}</div></div>
                         </div>
-                        <div className="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-colors">
-                          <div className="w-10 h-10 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center">
-                            {viewMode === 'retail' ? <Clock className="w-5 h-5 text-yellow-500" /> : <Package className="w-5 h-5 text-yellow-500" />}
+                        <div className={`flex items-center gap-4 p-4 rounded-2xl transition-colors border ${
+                          isDarkMode ? 'bg-white/5 border-white/10 hover:bg-white/10' : 'bg-yellow-50/50 border-yellow-100 hover:bg-yellow-100'
+                        }`}>
+                          <div className={`w-10 h-10 rounded-xl border flex items-center justify-center ${
+                            isDarkMode ? 'bg-yellow-500/10 border-yellow-500/20' : 'bg-yellow-100 border-yellow-200'
+                          }`}>
+                            {viewMode === 'retail' ? <Clock className={`w-5 h-5 ${isDarkMode ? 'text-yellow-500' : 'text-yellow-600'}`} /> : <Package className={`w-5 h-5 ${isDarkMode ? 'text-yellow-500' : 'text-yellow-600'}`} />}
                           </div>
-                          <div><div className="font-bold text-white text-sm">{currentOffer.perk2?.title}</div><div className="text-xs text-yellow-500/80 font-medium mt-0.5">{currentOffer.perk2?.desc}</div></div>
+                          <div><div className={`font-bold text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{currentOffer.perk2?.title}</div><div className={`text-xs font-medium mt-0.5 ${isDarkMode ? 'text-yellow-500/80' : 'text-yellow-700'}`}>{currentOffer.perk2?.desc}</div></div>
                         </div>
-                        <div className="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-colors">
-                          <div className="w-10 h-10 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center">
-                            {viewMode === 'retail' ? <Gift className="w-5 h-5 text-yellow-500" /> : <Users className="w-5 h-5 text-yellow-500" />}
+                        <div className={`flex items-center gap-4 p-4 rounded-2xl transition-colors border ${
+                          isDarkMode ? 'bg-white/5 border-white/10 hover:bg-white/10' : 'bg-yellow-50/50 border-yellow-100 hover:bg-yellow-100'
+                        }`}>
+                          <div className={`w-10 h-10 rounded-xl border flex items-center justify-center ${
+                            isDarkMode ? 'bg-yellow-500/10 border-yellow-500/20' : 'bg-yellow-100 border-yellow-200'
+                          }`}>
+                            {viewMode === 'retail' ? <Gift className={`w-5 h-5 ${isDarkMode ? 'text-yellow-500' : 'text-yellow-600'}`} /> : <Users className={`w-5 h-5 ${isDarkMode ? 'text-yellow-500' : 'text-yellow-600'}`} />}
                           </div>
-                          <div><div className="font-bold text-white text-sm">{currentOffer.perk3?.title}</div><div className="text-xs text-yellow-500/80 font-medium mt-0.5">{currentOffer.perk3?.desc}</div></div>
+                          <div><div className={`font-bold text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{currentOffer.perk3?.title}</div><div className={`text-xs font-medium mt-0.5 ${isDarkMode ? 'text-yellow-500/80' : 'text-yellow-700'}`}>{currentOffer.perk3?.desc}</div></div>
                         </div>
                       </div>
 
                       {/* Selected Product Info */}
                       {currentProducts[selectedProduct] && (
-                        <div className="mt-2 p-5 bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 rounded-2xl border border-yellow-500/20 mb-8">
-                          <div className="text-[10px] font-black uppercase tracking-[0.2em] mb-2 text-yellow-500/80">Selected Artifact</div>
-                          <div className="flex items-center justify-between text-white">
+                        <div className={`mt-2 p-5 rounded-2xl border mb-8 ${
+                          isDarkMode ? 'bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 border-yellow-500/20' : 'bg-gradient-to-br from-yellow-50 to-white border-yellow-300 shadow-inner'
+                        }`}>
+                          <div className={`text-[10px] font-black uppercase tracking-[0.2em] mb-2 ${isDarkMode ? 'text-yellow-500/80' : 'text-yellow-600'}`}>Selected Artifact</div>
+                          <div className={`flex items-center justify-between ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
                             <div className="max-w-[60%]">
                               <div className="font-bold text-base truncate">{currentProducts[selectedProduct].name}</div>
                             </div>
                             <div className="text-right">
-                              <div className="text-xl font-black text-yellow-400">{currentProducts[selectedProduct].price}</div>
+                              <div className={`text-xl font-black ${isDarkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>{currentProducts[selectedProduct].price}</div>
                             </div>
                           </div>
                         </div>
@@ -330,7 +377,7 @@ export default function ServicesPage(props: any) {
                         {currentOffer.buttonText} 
                         <ArrowRight className="w-4 h-4" />
                       </button>
-                      <div className="text-[10px] text-center text-gray-500 mt-4 font-medium uppercase tracking-widest">
+                      <div className={`text-[10px] text-center mt-4 font-medium uppercase tracking-widest ${isDarkMode ? 'text-gray-500' : 'text-slate-400'}`}>
                         {currentOffer.terms}
                       </div>
                     </div>
@@ -341,8 +388,8 @@ export default function ServicesPage(props: any) {
           </div>
         </div>
 
-        {/* Contact Modal (Preserved logic) */}
-        {!isPreview && <ContactPage isOpen={showContact} onClose={() => setShowContact(false)} isDarkMode={true} />}
+        {/* Contact Modal */}
+        {!isPreview && <ContactPage isOpen={showContact} onClose={() => setShowContact(false)} isDarkMode={isDarkMode} />}
       </div>
 
       <style jsx global>{`
