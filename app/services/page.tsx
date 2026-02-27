@@ -93,28 +93,28 @@ export default function ServicesPage(props: any) {
 
   if (isLoading) {
     return (
-      <div className={`min-h-screen flex justify-center items-center ${isDarkMode ? 'bg-black' : 'bg-slate-50'}`}>
+      <div className={`min-h-screen flex justify-center items-center w-full ${isDarkMode ? 'bg-black' : 'bg-slate-50'}`}>
         <Loader2 className="animate-spin text-yellow-500 w-12 h-12" />
       </div>
     );
   }
 
   return (
-    <div className={`relative min-h-screen w-full max-w-[100vw] flex flex-col transition-colors duration-500 overflow-x-hidden ${
+    <div className={`relative min-h-screen w-full flex flex-col transition-colors duration-500 overflow-x-hidden ${
       isDarkMode 
         ? 'bg-black text-white selection:bg-yellow-500/30 selection:text-yellow-200' 
         : 'bg-slate-50 text-slate-900 selection:bg-yellow-500/30 selection:text-yellow-900'
     }`}>
       
       {/* Dynamic Gold Glow Background */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <div className={`absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full blur-3xl ${isDarkMode ? 'bg-[radial-gradient(circle,rgba(234,179,8,0.1)_0%,transparent_70%)]' : 'bg-[radial-gradient(circle,rgba(234,179,8,0.15)_0%,transparent_70%)]'}`}></div>
         <div className={`absolute bottom-[-10%] right-[-5%] w-[40%] h-[60%] rounded-full blur-3xl ${isDarkMode ? 'bg-[radial-gradient(circle,rgba(212,175,55,0.08)_0%,transparent_70%)]' : 'bg-[radial-gradient(circle,rgba(212,175,55,0.15)_0%,transparent_70%)]'}`}></div>
       </div>
 
       {!isPreview && <Navbar theme={theme} toggleTheme={toggleTheme} />}
 
-      <div className={`relative z-10 flex-grow w-full ${isPreview ? 'py-12' : 'pt-24 pb-12'} px-4 sm:px-6 lg:px-8`}>
+      <div className={`relative z-10 flex-grow w-full ${isPreview ? 'py-12' : 'pt-24 pb-12'} px-4 sm:px-6 lg:px-8 max-w-[100vw]`}>
         <div className="max-w-7xl mx-auto mb-12 w-full">
           
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-12 w-full">
@@ -166,11 +166,11 @@ export default function ServicesPage(props: any) {
             </div>
           </div>
 
-          {/* GRID LAYOUT - Added flex-col max-w-full containment */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full">
+          {/* FLEX LAYOUT (Replaced Grid to strictly prevent blowout on mobile) */}
+          <div className="flex flex-col lg:flex-row gap-8 w-full max-w-full">
             
             {/* PRODUCT LIST (Left Column) - Strictly enforced min-w-0 */}
-            <div className="lg:col-span-2 flex flex-col min-w-0 w-full">
+            <div className="w-full lg:w-2/3 flex flex-col min-w-0">
               <div className={`backdrop-blur-xl rounded-3xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.1)] border w-full ${
                 isDarkMode ? 'bg-neutral-950/80 border-yellow-500/20' : 'bg-white border-yellow-400/30'
               }`}>
@@ -195,8 +195,8 @@ export default function ServicesPage(props: any) {
                   </div>
                 </div>
 
-                {/* Secure Table Wrapper */}
-                <div className="overflow-x-auto w-full">
+                {/* Secure Table Wrapper WITH NO-SCROLLBAR */}
+                <div className="w-full overflow-x-auto no-scrollbar">
                   <table className="w-full min-w-[600px] border-collapse text-left whitespace-nowrap">
                     <thead className={`border-b ${isDarkMode ? 'bg-neutral-900/40 border-yellow-500/20' : 'bg-yellow-50/50 border-yellow-200'}`}>
                       <tr>
@@ -285,7 +285,7 @@ export default function ServicesPage(props: any) {
             </div>
 
             {/* GOLD THEMED OFFER CARD (Right Column) */}
-            <div className="lg:col-span-1 flex flex-col min-w-0 w-full">
+            <div className="w-full lg:w-1/3 flex flex-col min-w-0">
               <AnimatePresence mode="wait">
                 <motion.div key={viewMode} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.4 }} className="h-full w-full">
                   <div className={`rounded-3xl p-6 sm:p-8 h-full border relative overflow-hidden flex flex-col group w-full ${
@@ -317,8 +317,9 @@ export default function ServicesPage(props: any) {
                             {viewMode === 'retail' ? <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" /> : <Zap className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" />}
                           </div>
                         </div>
-                        <div className={`text-lg sm:text-xl font-black mb-2 sm:mb-3 tracking-widest uppercase mt-4 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{currentOffer.title}</div>
-                        <p className={`text-xs sm:text-sm font-medium px-2 sm:px-4 leading-relaxed ${isDarkMode ? 'text-gray-400' : 'text-slate-600'}`}>{currentOffer.description}</p>
+                        {/* Enforced whitespace-normal and break-words so text doesn't blowout container */}
+                        <div className={`text-lg sm:text-xl font-black mb-2 sm:mb-3 tracking-widest uppercase mt-4 whitespace-normal break-words ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{currentOffer.title}</div>
+                        <p className={`text-xs sm:text-sm font-medium px-2 sm:px-4 leading-relaxed whitespace-normal break-words ${isDarkMode ? 'text-gray-400' : 'text-slate-600'}`}>{currentOffer.description}</p>
                       </div>
 
                       {/* Dynamic Perks */}
@@ -401,10 +402,16 @@ export default function ServicesPage(props: any) {
       </div>
 
       <style jsx global>{`
+        /* Essential for preventing mobile body scroll */
         html, body {
-          max-width: 100vw;
+          max-width: 100%;
           overflow-x: hidden;
         }
+        
+        /* Hides the scrollbar track on the table while still allowing touch scrolling */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
         @keyframes gradient { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
         .animate-gradient { background-size: 200% 200%; animation: gradient 3s ease infinite; }
       `}</style>
