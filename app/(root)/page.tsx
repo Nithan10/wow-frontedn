@@ -54,8 +54,8 @@ export default function Home() {
   const mainRef = useRef<HTMLDivElement>(null);
   const shopByCategoryRef = useRef<HTMLDivElement>(null);
 
-  const phoneNumber = "+918220320997"; 
-  const whatsappNumber = "8220320997"; 
+  const phoneNumber = "+919677710045"; 
+  const whatsappNumber = "9677710045"; 
 
   useEffect(() => {
     const optimizeScroll = () => {
