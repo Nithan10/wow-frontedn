@@ -6,7 +6,7 @@ import { Search, ChevronRight, Loader2, PackageX, Circle, Star } from 'lucide-re
 import NavbarHome from '@/app/components-main/NavbarHome'; 
 
 // Define your backend API URL here
-const API_URL = "https://wow-lifebackend.onrender.com/api";
+const API_URL = "https://wow-lifebackend.onrender.com";
 
 interface OrderItem {
   productId: string;
