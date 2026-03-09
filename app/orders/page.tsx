@@ -5,9 +5,6 @@ import { useRouter } from 'next/navigation';
 import { Search, ChevronRight, Loader2, PackageX, Circle, Star } from 'lucide-react';
 import NavbarHome from '@/app/components-main/NavbarHome'; 
 
-// Define your backend API URL here
-const API_URL = "https://wow-lifebackend.onrender.com/api";
-
 interface OrderItem {
   productId: string;
   title: string;
@@ -71,8 +68,7 @@ export default function MyOrdersPage() {
       const userId = userData._id || userData.id || '';
       const email = userData.email || '';
 
-      // Updated fetch URL
-      const response = await fetch(`${API_URL}/orders/my-orders?userId=${userId}&email=${email}`, {
+      const response = await fetch(`http://localhost:5000/api/orders/my-orders?userId=${userId}&email=${email}`, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`

@@ -10,9 +10,6 @@ import {
 
 import { CartProvider, useCart } from '@/app/components-main/CartContext';
 
-// Define your backend API URL here
-const API_URL = "https://wow-lifebackend.onrender.com/api";
-
 // Define cart item interface
 interface CartItem {
   id: string;
@@ -205,8 +202,8 @@ export default function CheckoutPage() {
         paymentMethod: paymentMethod
       };
 
-      // Send order to backend using the dynamically set API_URL
-      const response = await fetch(`${API_URL}/payment/initiate`, {
+      // Send order to backend (This saves to MongoDB & initiates PhonePe if needed)
+      const response = await fetch('http://localhost:5000/api/payment/initiate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderPayload)
@@ -429,7 +426,7 @@ export default function CheckoutPage() {
                 <div key={item.id} className="flex gap-4 items-start group">
                   <div className="relative flex-shrink-0">
                     <div className={`w-20 h-20 rounded-md border flex items-center justify-center p-1 ${theme === 'light' ? 'bg-white border-gray-200' : 'bg-[#111] border-[#333]'}`}>
-                      <img src={item.image as string} alt={String(item.title) || 'Product image'} className="w-full h-full object-contain" />
+                      <img src={item.image} alt={String(item.title) || 'Product image'} className="w-full h-full object-contain" />
                     </div>
                   </div>
                   <div className="flex-1 flex flex-col justify-between h-20">
@@ -438,8 +435,8 @@ export default function CheckoutPage() {
                       <div className="flex items-center gap-3">
                         <div className={`flex items-center rounded-md border ${theme === 'light' ? 'border-gray-200 bg-white' : 'border-[#333] bg-[#111]'}`}>
                           <button onClick={() => handleDecrease(item)} className={`p-1.5 transition-colors ${theme === 'light' ? 'text-gray-600 hover:bg-gray-50' : 'text-gray-400 hover:text-white hover:bg-[#222]'}`}><Minus size={14} /></button>
-                          <span className={`w-8 text-center text-xs font-bold ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>{item.quantity as number}</span>
-                          <button onClick={() => handleIncrease(item)} disabled={(item.quantity as number ?? 0) >= (item.totalStock || Infinity)} className={`p-1.5 transition-colors ${(item.quantity as number ?? 0) >= (item.totalStock || Infinity) ? 'opacity-30 cursor-not-allowed' : (theme === 'light' ? 'text-gray-600 hover:bg-gray-50' : 'text-gray-400 hover:text-[#D4AF37] hover:bg-[#222]')}`}><Plus size={14} /></button>
+                          <span className={`w-8 text-center text-xs font-bold ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>{item.quantity}</span>
+                          <button onClick={() => handleIncrease(item)} disabled={(item.quantity ?? 0) >= (item.totalStock || Infinity)} className={`p-1.5 transition-colors ${(item.quantity ?? 0) >= (item.totalStock || Infinity) ? 'opacity-30 cursor-not-allowed' : (theme === 'light' ? 'text-gray-600 hover:bg-gray-50' : 'text-gray-400 hover:text-[#D4AF37] hover:bg-[#222]')}`}><Plus size={14} /></button>
                         </div>
                         <button onClick={() => handleRemove(item)} className={`p-1.5 rounded transition-colors ${theme === 'light' ? 'text-gray-400 hover:text-red-500' : 'text-gray-500 hover:text-red-400'}`}><Trash2 size={16} /></button>
                       </div>

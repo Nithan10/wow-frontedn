@@ -5,9 +5,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { CheckCircle, XCircle, Loader2, RefreshCw, ShoppingBag } from 'lucide-react';
 import { useCart } from '@/app/components-main/CartContext';
 
-// Define your backend API URL here
-const API_URL = "https://wow-lifebackend.onrender.com/api";
-
 function PaymentStatusContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -26,8 +23,7 @@ function PaymentStatusContent() {
 
     setStatus('LOADING');
     try {
-      // Updated fetch URL
-      const response = await fetch(`${API_URL}/payment/status/${orderId}`);
+      const response = await fetch(`http://localhost:5000/api/payment/status/${orderId}`);
       const data = await response.json();
 
       if (response.ok && data.success) {
