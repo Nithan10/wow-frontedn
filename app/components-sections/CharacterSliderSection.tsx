@@ -2,6 +2,10 @@
 
 import React, { useState, useEffect, useRef, memo } from 'react';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation'; // IMPORTED useRouter
+
+// Define your backend API URL here
+const API_URL = "https://wow-lifebackend.onrender.com/api";
 
 // Define the Character type based on our database schema
 interface Character {
@@ -13,6 +17,7 @@ interface Character {
 
 // Optimized Character Slider
 const CharacterSlider = memo(({ theme }: { theme: 'dark' | 'light' }) => {
+  const router = useRouter(); // INITIALIZE ROUTER
   const sliderRef = useRef<HTMLDivElement>(null);
   const [characters, setCharacters] = useState<Character[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -21,7 +26,7 @@ const CharacterSlider = memo(({ theme }: { theme: 'dark' | 'light' }) => {
   useEffect(() => {
     const fetchCharacters = async () => {
       try {
-        const API_URL = "https://wow-lifebackend.onrender.com/api";
+        // Updated fetch URL using the constant
         const response = await fetch(`${API_URL}/characters`);
         const result = await response.json();
         
@@ -44,6 +49,11 @@ const CharacterSlider = memo(({ theme }: { theme: 'dark' | 'light' }) => {
 
     fetchCharacters();
   }, []);
+
+  // Click handler function
+  const handleCharacterClick = () => {
+    router.push('/category/collectors');
+  };
 
   // Show a smooth loading state while fetching data
   if (isLoading) {
@@ -93,8 +103,19 @@ const CharacterSlider = memo(({ theme }: { theme: 'dark' | 'light' }) => {
           className="flex gap-4 md:gap-6 px-4 md:px-12 cursor-grab active:cursor-grabbing pb-8 md:pb-12 overflow-x-auto no-scrollbar snap-x"
         >
           {characters.map((char, i) => (
-            <motion.div key={char.id} initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05, duration: 0.5 }} className="relative flex-shrink-0 snap-center">
-              <div className="group/card relative w-36 h-48 md:w-48 md:h-64 lg:w-56 lg:h-72 rounded-2xl md:rounded-[2rem] overflow-hidden transition-all duration-500 hover:-translate-y-2 md:hover:-translate-y-3 will-change-transform">
+            <motion.div 
+              key={char.id} 
+              initial={{ opacity: 0, x: 50 }} 
+              whileInView={{ opacity: 1, x: 0 }} 
+              viewport={{ once: true }} 
+              transition={{ delay: i * 0.05, duration: 0.5 }} 
+              className="relative flex-shrink-0 snap-center"
+            >
+              {/* Added onClick to make the whole card clickable */}
+              <div 
+                onClick={handleCharacterClick}
+                className="group/card relative w-36 h-48 md:w-48 md:h-64 lg:w-56 lg:h-72 rounded-2xl md:rounded-[2rem] overflow-hidden transition-all duration-500 hover:-translate-y-2 md:hover:-translate-y-3 will-change-transform cursor-pointer"
+              >
                 <div className="absolute inset-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 blur-xl" style={{ backgroundColor: char.color }} />
                 <div className={`relative w-full h-full bg-gray-900 rounded-2xl md:rounded-[2rem] overflow-hidden border ${theme === 'light' ? 'border-gray-200' : 'border-white/10'} group-hover/card:border-white/30 transition-colors`}>
                   <div className="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover/card:scale-110" style={{ backgroundImage: `url(${char.src})`, backgroundColor: '#1a1a1a' }} />

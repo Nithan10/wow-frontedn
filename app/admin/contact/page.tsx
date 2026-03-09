@@ -11,6 +11,8 @@ import ContactPage, { ContactData } from '../../../app/services/ContactPage';
 // Change port 5000 if your node server runs on a different port.
 const API_URL = "https://wow-lifebackend.onrender.com/api";
 
+
+
 const axiosInstance = axios.create({ baseURL: API_URL, headers: { 'Content-Type': 'application/json' } });
 axiosInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
@@ -174,9 +176,9 @@ export default function ContactAdminPage() {
             </select>
             
             <div className="flex bg-gray-200 rounded-lg p-1 mr-2">
-              <button onClick={() => handleTabChange('edit')} className={`px-4 py-2 rounded-lg text-sm font-medium flex gap-2 ${activeTab === 'edit' ? 'bg-white shadow text-gray-900' : 'text-gray-600 hover:text-gray-900'}`}><Edit2 size={16}/> Edit</button>
-              <button onClick={() => handleTabChange('preview')} className={`px-4 py-2 rounded-lg text-sm font-medium flex gap-2 ${activeTab === 'preview' ? 'bg-white shadow text-gray-900' : 'text-gray-600 hover:text-gray-900'}`}><Eye size={16}/> Preview</button>
-              <button onClick={() => handleTabChange('messages')} className={`px-4 py-2 rounded-lg text-sm font-medium flex gap-2 ${activeTab === 'messages' ? 'bg-white shadow text-blue-600' : 'text-gray-600 hover:text-gray-900'}`}><Inbox size={16}/> Messages</button>
+              <button onClick={() => handleTabChange('edit')} className={`px-4 py-2 rounded-lg text-sm font-medium flex gap-2 ${activeTab === 'edit' ? 'bg-white shadow' : 'text-gray-600'}`}><Edit2 size={16}/> Edit</button>
+              <button onClick={() => handleTabChange('preview')} className={`px-4 py-2 rounded-lg text-sm font-medium flex gap-2 ${activeTab === 'preview' ? 'bg-white shadow' : 'text-gray-600'}`}><Eye size={16}/> Preview</button>
+              <button onClick={() => handleTabChange('messages')} className={`px-4 py-2 rounded-lg text-sm font-medium flex gap-2 ${activeTab === 'messages' ? 'bg-white shadow text-blue-600' : 'text-gray-600'}`}><Inbox size={16}/> Messages</button>
             </div>
 
             {isAuthenticated && activeTab === 'edit' && (
@@ -249,25 +251,12 @@ export default function ContactAdminPage() {
           </div>
         )}
 
-        {/* PREVIEW TAB WITH SCROLLBAR REMOVAL */}
+        {/* PREVIEW TAB */}
         {activeTab === 'preview' && (
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center text-sm text-gray-500 bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
-              <Eye size={16} className="mr-2 text-blue-500" /> 
-              <strong>Live Preview Mode</strong>
-              <span className="ml-auto text-xs bg-blue-50 text-blue-700 px-3 py-1 rounded-full font-medium border border-blue-100 hidden sm:inline-block">
-                Scroll independently (Scrollbar hidden)
-              </span>
-            </div>
-            
-            <div className={`w-full h-[80vh] min-h-[600px] rounded-2xl shadow-inner border p-4 sm:p-8 flex justify-center items-start overflow-hidden relative transition-colors duration-500 ${
-              theme === 'dark' ? 'bg-neutral-950 border-gray-800' : 'bg-gray-200/50 border-gray-200'
-            }`}>
-               {/* This inner container allows scrolling but explicitly hides the scrollbar using the injected CSS classes */}
-               <div className="w-full max-w-5xl h-full overflow-y-auto overflow-x-hidden no-scrollbar pb-10">
-                 <ContactPage isOpen={true} onClose={() => {}} isDarkMode={theme === 'dark'} isPreview={true} previewData={data} />
-               </div>
-            </div>
+          <div className={`rounded-xl shadow-sm border border-gray-100 p-8 flex justify-center ${theme === 'dark' ? 'bg-slate-800' : 'bg-gray-100'}`}>
+             <div className="w-full max-w-5xl">
+               <ContactPage isOpen={true} onClose={() => {}} isDarkMode={theme === 'dark'} isPreview={true} previewData={data} />
+             </div>
           </div>
         )}
 
@@ -338,19 +327,6 @@ export default function ContactAdminPage() {
           </div>
         )}
       </div>
-
-      {/* GLOBAL CSS TO FORCE HIDE SCROLLBARS ON PREVIEW */}
-      <style jsx global>{`
-        .no-scrollbar::-webkit-scrollbar { 
-          display: none !important; 
-          width: 0 !important; 
-          height: 0 !important; 
-        }
-        .no-scrollbar { 
-          -ms-overflow-style: none !important; 
-          scrollbar-width: none !important; 
-        }
-      `}</style>
     </Layout>
   );
 }

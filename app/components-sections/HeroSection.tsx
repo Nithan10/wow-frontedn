@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { CarFront, ArrowRight, Trophy, Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation'; // IMPORTED ROUTER
 import axios from 'axios';
 
 // API Configuration
@@ -30,6 +31,8 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({ theme, isMobile }: HeroSectionProps) {
+  const router = useRouter(); // INITIALIZED ROUTER
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [content, setContent] = useState<HeroContent | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -249,7 +252,10 @@ export default function HeroSection({ theme, isMobile }: HeroSectionProps) {
                 variants={textVariants} 
                 className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center lg:justify-start"
               >
-                <button className="px-6 py-3 md:px-8 md:py-4 bg-gradient-to-r from-[#D4AF37] to-[#FCEEAC] text-black font-bold text-base md:text-lg rounded-lg md:rounded-xl hover:shadow-lg md:hover:shadow-xl hover:shadow-[#D4AF37]/25 transition-all duration-300 flex items-center justify-center gap-2 md:gap-3 group">
+                <button 
+                  onClick={() => router.push('/category/collectors')} // ADDED ROUTING HERE
+                  className="px-6 py-3 md:px-8 md:py-4 bg-gradient-to-r from-[#D4AF37] to-[#FCEEAC] text-black font-bold text-base md:text-lg rounded-lg md:rounded-xl hover:shadow-lg md:hover:shadow-xl hover:shadow-[#D4AF37]/25 transition-all duration-300 flex items-center justify-center gap-2 md:gap-3 group"
+                >
                   {content.primaryButtonText} <ArrowRight size={18} className="md:size-[20px] group-hover:translate-x-1 transition-transform" />
                 </button>
                 <button className={`px-6 py-3 md:px-8 md:py-4 ${theme === 'light' ? 'bg-gray-100 border-gray-300 text-gray-800 hover:bg-gray-200' : 'bg-white/5 border-white/10 text-white hover:bg-white/10'} border font-bold text-base md:text-lg rounded-lg md:rounded-xl transition-all duration-300 flex items-center justify-center gap-2 md:gap-3`}>
@@ -306,7 +312,7 @@ export default function HeroSection({ theme, isMobile }: HeroSectionProps) {
         </div>
       </div>
 
-      {/* Brand Logos - Updated for reduced spacing */}
+      {/* Brand Logos */}
       {content.brands.length > 0 && (
         <div className={`relative w-full border-t ${getBorderColor()} ${theme === 'light' ? 'bg-white/60' : 'bg-black/60'} backdrop-blur-lg mt-6 md:mt-8 py-2 md:py-3`}>
           <div className={`absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r ${theme === 'light' ? 'from-white' : 'from-black'} to-transparent z-10 pointer-events-none`} />

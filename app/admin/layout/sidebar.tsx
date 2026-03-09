@@ -6,11 +6,17 @@ import './Layout.css';
 
 export default function Sidebar() {
   const router = useRouter();
-  const pathname = usePathname(); // Added to track the current URL
+  const pathname = usePathname(); // Tracks the current URL
   const [activeItem, setActiveItem] = useState('Dashboard');
   const [isPortfolioOpen, setIsPortfolioOpen] = useState(true);
 
-  const menuItems = [
+  const menuItems: Array<{
+    name: string;
+    icon: string;
+    path?: string;
+    badge?: string;
+    subItems?: Array<{ name: string; icon: string; path: string }>;
+  }> = [
     { name: 'Dashboard', icon: '📊', path: '/admin/dashboard' },
     { 
       name: 'Portfolio',
@@ -21,7 +27,7 @@ export default function Sidebar() {
         { name: 'Studio', icon: '📄', path: '/admin/StudioAdminPage' },
         { name: 'RalleyzSection', icon: '📄', path: '/admin/RalleyzSection' },
         { name: 'Characters', icon: '🦸', path: '/admin/characters' },
-        { name: 'Best Sellers', icon: '⭐', path: '/admin/best-sellers' },
+        { name: 'Top Picks', icon: '⭐', path: '/admin/best-sellers' },
         { name: 'Shop By Age', icon: '🧸', path: '/admin/shop-by-age' },
         { name: 'Categories', icon: '🛒', path: '/admin/shop-by-category' },
         { name: 'Best of WOW', icon: '🍱', path: '/admin/bento-grid' },
@@ -29,12 +35,13 @@ export default function Sidebar() {
         { name: 'Services/Products', icon: '🛍️', path: '/admin/services' },
         { name: 'Contact Form', icon: '📬', path: '/admin/contact' },
         { name: 'Blog & Lifestyle', icon: '📝', path: '/admin/blog-lifestyle' },
-        { name: 'Testimonials', icon: '🗣️', path: '/admin/testimonials' } // FIXED: Replaced  with 🗣️
+        { name: 'Testimonials', icon: '🗣️', path: '/admin/testimonials' }
       ]
     },
-    { name: 'Analytics', icon: '📈', path: '/admin/analytics' },
-    { name: 'Messages', icon: '💬', badge: 3, path: '/admin/messages' },
-    { name: 'Calendar', icon: '📅', path: '/admin/calendar' },
+    { name: 'Product', icon: '📈', path: '/admin/product' },
+    { name: 'Order History', icon: '📦', path: '/admin/order-history' }, // <-- ADDED HERE
+    { name: 'User Management', icon: '👥', path: '/admin/users'},
+    { name: 'Dynamic Content', icon: '⚡', path: '/admin/dynamic-content' },
     { name: 'Settings', icon: '⚙️', path: '/admin/settings' },
   ];
 
@@ -68,6 +75,14 @@ export default function Sidebar() {
     // 2. Handle Navigation
     if (item.path) {
       router.push(item.path);
+    }
+  };
+
+  const handleLogout = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      router.push('/login');
     }
   };
 
@@ -136,7 +151,11 @@ export default function Sidebar() {
             <p>john@company.com</p>
           </div>
         </div>
-        <div className="nav-item" style={{ marginTop: '5px', color: '#ef4444', border: 'none', cursor: 'pointer' }}>
+        <div 
+          className="nav-item" 
+          onClick={handleLogout}
+          style={{ marginTop: '5px', color: '#ef4444', border: 'none', cursor: 'pointer' }}
+        >
           <span className="nav-icon">🚪</span>
           <span>Logout</span>
         </div>

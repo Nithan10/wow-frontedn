@@ -26,8 +26,8 @@ interface AuthResponse {
   };
 }
 
-// 1. We move the main logic into an inner component
-function AuthContent() {
+// 1. Rename your main component to AuthPageContent
+function AuthPageContent() {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -212,8 +212,7 @@ function AuthContent() {
   };
 
   return (
-    <section className="fixed inset-0 z-[9999] flex h-screen w-full items-center justify-center bg-black px-4 text-white overflow-hidden">
-      
+    <>
       {/* Background Glow */}
       <div className="pointer-events-none absolute -top-20 -left-20 h-96 w-96 rounded-full bg-yellow-600/20 blur-[100px]"></div>
       <div className="pointer-events-none absolute top-0 left-0 h-64 w-64 rounded-full bg-orange-500/10 blur-[80px]"></div>
@@ -374,15 +373,24 @@ function AuthContent() {
           </button>
         </p>
       </div>
-    </section>
+    </>
   );
 }
 
-// 2. We wrap the inner component in a Suspense boundary and export it
+// 2. Export a new default component that wraps the content in Suspense
 export default function AuthPage() {
   return (
-    <Suspense fallback={<div className="flex h-screen w-full items-center justify-center bg-black text-white">Loading Authentication...</div>}>
-      <AuthContent />
-    </Suspense>
+    <section className="fixed inset-0 z-[9999] flex h-screen w-full items-center justify-center bg-black px-4 text-white overflow-hidden">
+      <Suspense 
+        fallback={
+          <div className="flex flex-col items-center justify-center gap-4">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-yellow-400 border-t-transparent"></div>
+            <p className="text-sm text-gray-400 tracking-widest uppercase">Loading...</p>
+          </div>
+        }
+      >
+        <AuthPageContent />
+      </Suspense>
+    </section>
   );
 }

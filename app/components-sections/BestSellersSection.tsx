@@ -3,6 +3,10 @@
 import React, { useState, useEffect, useRef, memo } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Zap, Heart, Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+
+// Define your backend API URL here
+const API_URL = "https://wow-lifebackend.onrender.com/api";
 
 export interface BestSellerItem {
   id: string | number;
@@ -18,6 +22,8 @@ interface BestSellersSectionProps {
 }
 
 const BestSellers = memo(({ theme = 'dark', isPreview = false, previewData = [] }: BestSellersSectionProps) => {
+  const router = useRouter(); 
+  
   const [items, setItems] = useState<BestSellerItem[]>(previewData);
   const [isLoading, setIsLoading] = useState(!isPreview);
   const [activeCard, setActiveCard] = useState(0);
@@ -36,7 +42,7 @@ const BestSellers = memo(({ theme = 'dark', isPreview = false, previewData = [] 
 
     const fetchItems = async () => {
       try {
-        const API_URL = "https://wow-lifebackend.onrender.com/api";
+        // Updated fetch URL
         const response = await fetch(`${API_URL}/bestsellers`);
         const result = await response.json();
         
@@ -76,8 +82,14 @@ const BestSellers = memo(({ theme = 'dark', isPreview = false, previewData = [] 
     return () => clearInterval(timer);
   }, [activeCard, isInView, items.length]);
 
+  // Handle Card Clicks: Expand if inactive, route if active
   const handleCardClick = (index: number) => {
-    if (activeCard !== index) setActiveCard(index);
+    if (activeCard !== index) {
+      setActiveCard(index);
+    } else {
+      // If the card is already active, navigate to the category
+      router.push('/category/collectors');
+    }
   };
 
   if (isLoading) {
@@ -150,6 +162,10 @@ const BestSellers = memo(({ theme = 'dark', isPreview = false, previewData = [] 
                     {/* Heart Icon (Fades in on active) */}
                     <div 
                       className={`p-3 rounded-full bg-white/20 backdrop-blur-md border border-white/20 transition-all duration-500 text-white pointer-events-auto hover:bg-white hover:text-black ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Add wishlist logic here if needed
+                      }}
                     >
                       <Heart size={20} className={isActive ? 'fill-current' : ''} />
                     </div>
