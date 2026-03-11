@@ -204,7 +204,7 @@ function AuthPageContent() {
   };
 
   const toggleMode = () => {
-    setIsLogin(!isLogin);
+    setIsLogin(!isLogin);    
     setError("");
     setFullname("");
     setMobilenumber("");
