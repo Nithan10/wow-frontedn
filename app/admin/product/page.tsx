@@ -15,9 +15,6 @@ import {
 } from 'lucide-react';
 import Layout from '../layout/layout'; 
 
-// Define your backend API URL here
-const API_URL = "https://wow-lifebackend.onrender.com/api";
-
 interface ProductSpec {
   label: string;
   value: string;
@@ -103,7 +100,7 @@ export default function AdminProductPage() {
       const rawToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
       const token = rawToken ? rawToken.replace(/['"]+/g, '') : null;
       
-      const response = await fetch(`${API_URL}/admin/categories`, {
+      const response = await fetch(`https://wow-lifebackend.onrender.com/api/admin/categories`, {
         headers: token ? { 'Authorization': `Bearer ${token}` } : {},
       });
       const data = await response.json();
@@ -122,7 +119,7 @@ export default function AdminProductPage() {
       const token = rawToken ? rawToken.replace(/['"]+/g, '') : null;
       
       const timestamp = new Date().getTime();
-      const response = await fetch(`${API_URL}/admin/products?t=${timestamp}`, {
+      const response = await fetch(`/api/admin/products?t=${timestamp}`, {
         method: 'GET',
         headers: { 
           'Authorization': `Bearer ${token}`,
@@ -268,7 +265,7 @@ export default function AdminProductPage() {
       const rawToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
       const token = rawToken ? rawToken.replace(/['"]+/g, '') : null;
 
-      const response = await fetch(`${API_URL}/admin/products/${productToDelete}`, {
+      const response = await fetch(`https://wow-lifebackend.onrender.com/api/admin/products/${productToDelete}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -315,8 +312,8 @@ export default function AdminProductPage() {
       }
 
       const url = isUpdating 
-        ? `${API_URL}/admin/products/${productId}` 
-        : `${API_URL}/admin/products`;
+        ? `https://wow-lifebackend.onrender.com/api/admin/products/${productId}` 
+        : 'https://wow-lifebackend.onrender.com/api/admin/products';
       const method = isUpdating ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
