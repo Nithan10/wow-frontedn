@@ -23,7 +23,8 @@ function PaymentStatusContent() {
 
     setStatus('LOADING');
     try {
-      const response = await fetch(`http://localhost:5000/api/payment/status/${orderId}`);
+      // FIXED URL HERE: Pointing to your production backend
+      const response = await fetch(`https://wow-lifebackend.onrender.com/api/payment/status/${orderId}`);
       const data = await response.json();
 
       if (response.ok && data.success) {
