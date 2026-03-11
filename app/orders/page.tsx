@@ -68,7 +68,8 @@ export default function MyOrdersPage() {
       const userId = userData._id || userData.id || '';
       const email = userData.email || '';
 
-      const response = await fetch(`http://localhost:5000/api/orders/my-orders?userId=${userId}&email=${email}`, {
+      // FIXED URL HERE: Pointing to your production backend
+      const response = await fetch(`https://wow-lifebackend.onrender.com/api/orders/my-orders?userId=${userId}&email=${email}`, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
