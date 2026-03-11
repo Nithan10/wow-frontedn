@@ -202,8 +202,8 @@ export default function CheckoutPage() {
         paymentMethod: paymentMethod
       };
 
-      // Send order to backend (This saves to MongoDB & initiates PhonePe if needed)
-      const response = await fetch('http://localhost:5000/api/payment/initiate', {
+      // FIXED URL HERE: Pointing to your production backend
+      const response = await fetch('https://wow-lifebackend.onrender.com/api/payment/initiate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderPayload)
@@ -422,7 +422,8 @@ export default function CheckoutPage() {
         <div className={`lg:w-[450px] p-6 md:p-10 order-1 lg:order-2 border-b lg:border-b-0 lg:border-l ${theme === 'light' ? 'bg-gray-50 border-gray-200' : 'bg-[#050505] border-[#222]'}`}>
           <div className="sticky top-10">
             <div className="space-y-6 mb-8">
-              {itemsToCheckout.map((item: { id: React.Key | null | undefined; image: string | Blob | undefined; title: string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined> | null | undefined; quantity: string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined> | null | undefined; totalStock: any; price: number; }) => (
+              {/* Cleaned up the type mapping here */}
+              {itemsToCheckout.map((item: CartItem) => (
                 <div key={item.id} className="flex gap-4 items-start group">
                   <div className="relative flex-shrink-0">
                     <div className={`w-20 h-20 rounded-md border flex items-center justify-center p-1 ${theme === 'light' ? 'bg-white border-gray-200' : 'bg-[#111] border-[#333]'}`}>
