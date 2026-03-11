@@ -119,7 +119,8 @@ export default function AdminProductPage() {
       const token = rawToken ? rawToken.replace(/['"]+/g, '') : null;
       
       const timestamp = new Date().getTime();
-      const response = await fetch(`/api/admin/products?t=${timestamp}`, {
+      // FIXED URL HERE: Added the full base URL
+      const response = await fetch(`https://wow-lifebackend.onrender.com/api/admin/products?t=${timestamp}`, {
         method: 'GET',
         headers: { 
           'Authorization': `Bearer ${token}`,
@@ -144,6 +145,8 @@ export default function AdminProductPage() {
         else if (data?.data && Array.isArray(data.data)) productsArray = data.data;
 
         setProducts(productsArray.reverse());
+      } else {
+        throw new Error(data.message || 'Failed to load products');
       }
     } catch (error) {
       console.error('Error fetching products:', error);
@@ -153,7 +156,6 @@ export default function AdminProductPage() {
     }
   };
 
-  // --- UPDATED HANDLE CHANGE (Auto-syncs Stock & Availability) ---
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
     let parsedValue: any = value;
@@ -165,7 +167,6 @@ export default function AdminProductPage() {
     setFormData(prev => {
       const newData = { ...prev, [name]: parsedValue };
       
-      // MAGIC HAPPENS HERE: If editing stock, auto-update availability dropdown
       if (name === 'totalStock') {
         newData.availability = parsedValue > 0 ? 'In Stock' : 'Out Of Stock';
       }
