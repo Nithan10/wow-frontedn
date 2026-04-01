@@ -97,10 +97,11 @@ export default function HeroSection({ theme, isMobile }: HeroSectionProps) {
     setImageErrors(prev => new Set(prev).add(index));
   };
 
-  const getTextColor = () => theme === 'light' ? 'text-gray-900' : 'text-white';
-  const getSecondaryTextColor = () => theme === 'light' ? 'text-gray-600' : 'text-gray-300';
-  const getBorderColor = () => theme === 'light' ? 'border-gray-200' : 'border-white/10';
-  const getGridColor = () => theme === 'light' ? 'bg-[linear-gradient(to_right,#e5e7eb_1px,transparent_1px),linear-gradient(to_bottom,#e5e7eb_1px,transparent_1px)]' : 'bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)]';
+  // Locked these to dark text/light grid colors to ensure visibility on the white background
+  const getTextColor = () => 'text-gray-900';
+  const getSecondaryTextColor = () => 'text-gray-600';
+  const getBorderColor = () => 'border-gray-200';
+  const getGridColor = () => 'bg-[linear-gradient(to_right,#e5e7eb_1px,transparent_1px),linear-gradient(to_bottom,#e5e7eb_1px,transparent_1px)]';
   
   const textVariants = { 
     hidden: { opacity: 0, y: 30 }, 
@@ -164,7 +165,7 @@ export default function HeroSection({ theme, isMobile }: HeroSectionProps) {
   // Loading state
   if (isLoading) {
     return (
-      <section className={`relative min-h-screen overflow-hidden flex flex-col justify-center pt-32 md:pt-24 lg:pt-32 pb-12 md:pb-20`}>
+      <section className="relative bg-white min-h-screen overflow-hidden flex flex-col justify-center pt-32 md:pt-24 lg:pt-32 pb-12 md:pb-20">
         <div className="flex-grow flex items-center justify-center">
           <div className="text-center">
             <Loader2 size={40} className="animate-spin text-[#D4AF37] mx-auto mb-4" />
@@ -178,7 +179,7 @@ export default function HeroSection({ theme, isMobile }: HeroSectionProps) {
   // Error state with retry
   if (error && !content) {
     return (
-      <section className={`relative min-h-screen overflow-hidden flex flex-col justify-center pt-32 md:pt-24 lg:pt-32 pb-12 md:pb-20`}>
+      <section className="relative bg-white min-h-screen overflow-hidden flex flex-col justify-center pt-32 md:pt-24 lg:pt-32 pb-12 md:pb-20">
         <div className="flex-grow flex items-center justify-center">
           <div className="text-center max-w-md px-4">
             <div className="text-red-500 mb-4">⚠️</div>
@@ -199,7 +200,7 @@ export default function HeroSection({ theme, isMobile }: HeroSectionProps) {
   if (!content) return null;
 
   return (
-    <section className={`relative min-h-screen overflow-hidden flex flex-col justify-center pt-32 md:pt-24 lg:pt-32 pb-8 md:pb-12`}>
+    <section className="relative bg-white min-h-screen overflow-hidden flex flex-col justify-center pt-32 md:pt-24 lg:pt-32 pb-8 md:pb-12">
       <div className="absolute right-[-20%] md:right-[-10%] top-[20%] w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-gradient-to-br from-[#D4AF37]/20 to-transparent blur-[80px] md:blur-[150px] rounded-full pointer-events-none -z-10" />
       <div className={`absolute inset-0 ${getGridColor()} bg-[size:16px_16px] md:bg-[size:24px_24px] -z-20`}></div>
       
@@ -258,7 +259,7 @@ export default function HeroSection({ theme, isMobile }: HeroSectionProps) {
                 >
                   {content.primaryButtonText} <ArrowRight size={18} className="md:size-[20px] group-hover:translate-x-1 transition-transform" />
                 </button>
-                <button className={`px-6 py-3 md:px-8 md:py-4 ${theme === 'light' ? 'bg-gray-100 border-gray-300 text-gray-800 hover:bg-gray-200' : 'bg-white/5 border-white/10 text-white hover:bg-white/10'} border font-bold text-base md:text-lg rounded-lg md:rounded-xl transition-all duration-300 flex items-center justify-center gap-2 md:gap-3`}>
+                <button className="px-6 py-3 md:px-8 md:py-4 bg-gray-100 border-gray-300 text-gray-800 hover:bg-gray-200 border font-bold text-base md:text-lg rounded-lg md:rounded-xl transition-all duration-300 flex items-center justify-center gap-2 md:gap-3">
                   {content.secondaryButtonText} <CarFront size={18} className="md:size-[20px]" />
                 </button>
               </motion.div>
@@ -314,9 +315,9 @@ export default function HeroSection({ theme, isMobile }: HeroSectionProps) {
 
       {/* Brand Logos */}
       {content.brands.length > 0 && (
-        <div className={`relative w-full border-t ${getBorderColor()} ${theme === 'light' ? 'bg-white/60' : 'bg-black/60'} backdrop-blur-lg mt-6 md:mt-8 py-2 md:py-3`}>
-          <div className={`absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r ${theme === 'light' ? 'from-white' : 'from-black'} to-transparent z-10 pointer-events-none`} />
-          <div className={`absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l ${theme === 'light' ? 'from-white' : 'from-black'} to-transparent z-10 pointer-events-none`} />
+        <div className={`relative w-full border-t ${getBorderColor()} bg-white/60 backdrop-blur-lg mt-6 md:mt-8 py-2 md:py-3`}>
+          <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
           
           <div className="flex overflow-hidden items-center h-full">
             <motion.div 
@@ -330,7 +331,7 @@ export default function HeroSection({ theme, isMobile }: HeroSectionProps) {
                     src={brand.src} 
                     alt={brand.name} 
                     loading="lazy" 
-                    className={`h-8 md:h-10 lg:h-12 w-auto object-contain transition-all duration-500 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110 md:group-hover:scale-125 ${theme === 'light' ? 'grayscale opacity-50' : 'grayscale opacity-40'}`}
+                    className="h-8 md:h-10 lg:h-12 w-auto object-contain transition-all duration-500 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110 md:group-hover:scale-125 grayscale opacity-50"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = 'https://via.placeholder.com/100x50?text=Logo';
                     }}
