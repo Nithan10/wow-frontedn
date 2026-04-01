@@ -64,20 +64,23 @@ export default function Preloader({ onComplete }: PreloaderProps) {
         )}
       </AnimatePresence>
 
-      {/* --- THE CAR ANIMATION (Wipe Effect) --- */}
+      {/* --- THE CAR ANIMATION --- */}
       <motion.div
-        className="absolute top-1/2 left-0 -translate-y-1/2 z-50 pointer-events-none"
-        // FIXED: Using percentages relative to ELEMENT width, not viewport width.
-        // '-120%' ensures the car is fully hidden to the left regardless of screen size.
-        initial={{ x: "-120%" }} 
-        animate={status === 'driving' ? { x: "120vw" } : { x: "-120%" }} 
+        // CHANGED: positioned to the center horizontally (left-1/2) 
+        className="absolute top-1/2 left-1/2 z-50 pointer-events-none"
+        
+        // CHANGED: Start way off-screen to the left, and already centered vertically (y: -50%)
+        initial={{ x: "-150vw", y: "-50%" }} 
+        
+        // CHANGED: Animate to x: -50% to perfectly align the center of the car with the center of the screen
+        animate={status === 'driving' ? { x: "-50%", y: "-50%" } : { x: "-150vw", y: "-50%" }} 
+        
         transition={{ 
           duration: 1.2, // Speed of the car
-          ease: [0.22, 1, 0.36, 1], // "Fast in, slow out" motion
+          ease: [0.22, 1, 0.36, 1], // "Fast in, slow out" motion - makes it brake nicely in the center
           delay: 0.1 // Slight delay after click
         }}
       >
-        {/* Replace with your car image */}
         {/* FIXED: Made car responsive (w-[160vw] on mobile) so it looks big and impressive */}
         <img 
           src="/pngcar.png" 
