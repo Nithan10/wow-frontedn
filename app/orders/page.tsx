@@ -68,7 +68,7 @@ export default function MyOrdersPage() {
       const userId = userData._id || userData.id || '';
       const email = userData.email || '';
 
-      // FIXED URL HERE: Pointing to your production backend
+      // Pointing to your production backend
       const response = await fetch(`https://wow-lifebackend.onrender.com/api/orders/my-orders?userId=${userId}&email=${email}`, {
         headers: {
           'Content-Type': 'application/json',
@@ -156,7 +156,7 @@ export default function MyOrdersPage() {
       <NavbarHome theme={theme} toggleTheme={() => setTheme(theme === 'light' ? 'dark' : 'light')} />
 
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6 pt-24 md:pt-32">
-        <div className={`flex items-center gap-2 text-xs mb-4 ${theme === 'light' ? 'text-gray-500' : 'text-gray-400'}`}>
+        <div className={`flex items-center gap-2 text-xs mb-4 flex-wrap ${theme === 'light' ? 'text-gray-500' : 'text-gray-400'}`}>
           <span className="hover:text-blue-600 cursor-pointer" onClick={() => router.push('/')}>Home</span>
           <ChevronRight size={12} />
           <span className="hover:text-blue-600 cursor-pointer" onClick={() => router.push('/profile')}>My Account</span>
@@ -203,10 +203,10 @@ export default function MyOrdersPage() {
                 placeholder="Search your orders here" 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className={`flex-1 px-4 py-3 outline-none text-sm ${theme === 'light' ? 'bg-white text-gray-800' : 'bg-[#111] text-white placeholder-gray-600'}`}
+                className={`flex-1 px-4 py-3 outline-none text-sm w-full min-w-0 ${theme === 'light' ? 'bg-white text-gray-800' : 'bg-[#111] text-white placeholder-gray-600'}`}
               />
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 text-sm font-medium flex items-center gap-2 transition-colors">
-                <Search size={16} /> Search Orders
+              <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-3 text-sm font-medium flex items-center gap-2 transition-colors shrink-0">
+                <Search size={16} /> <span className="hidden sm:inline">Search Orders</span>
               </button>
             </div>
 
@@ -229,28 +229,37 @@ export default function MyOrdersPage() {
                   return (
                     <div 
                       key={`${item.parentOrderId}-${idx}`} 
-                      className={`p-4 sm:p-6 flex flex-col sm:flex-row gap-6 rounded-sm shadow-sm border transition-colors hover:shadow-md cursor-pointer ${
+                      className={`p-4 sm:p-6 flex flex-col sm:flex-row gap-4 sm:gap-6 rounded-sm shadow-sm border transition-colors hover:shadow-md cursor-pointer ${
                         theme === 'light' ? 'bg-white border-gray-100 hover:border-gray-200' : 'bg-[#111] border-[#222] hover:border-[#333]'
                       }`}
                     >
-                      <div className="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 bg-white border border-gray-100 rounded">
-                        <img src={item.image} alt={item.title} className="w-full h-full object-contain p-2" />
+                      {/* Product Info - Flex Row on Mobile */}
+                      <div className="flex gap-4 sm:gap-6 flex-1 min-w-0">
+                        <div className="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 bg-white border border-gray-100 rounded">
+                          <img src={item.image} alt={item.title} className="w-full h-full object-contain p-2" />
+                        </div>
+
+                        <div className="flex-1 min-w-0 flex flex-col justify-start">
+                          <h4 className={`text-sm font-medium line-clamp-2 mb-1 hover:text-blue-600 ${theme === 'light' ? 'text-gray-800' : 'text-gray-200'}`}>
+                            {item.title}
+                          </h4>
+                          <p className={`text-xs mt-1 ${theme === 'light' ? 'text-gray-500' : 'text-gray-500'}`}>
+                            Qty: {item.quantity}
+                          </p>
+                          {/* Price visible only on mobile under the title */}
+                          <div className={`mt-2 text-sm font-medium sm:hidden ${theme === 'light' ? 'text-gray-900' : 'text-gray-100'}`}>
+                            ₹{item.price.toLocaleString()}
+                          </div>
+                        </div>
                       </div>
 
-                      <div className="flex-1 min-w-0 flex flex-col justify-start">
-                        <h4 className={`text-sm font-medium line-clamp-2 mb-1 hover:text-blue-600 ${theme === 'light' ? 'text-gray-800' : 'text-gray-200'}`}>
-                          {item.title}
-                        </h4>
-                        <p className={`text-xs mt-1 ${theme === 'light' ? 'text-gray-500' : 'text-gray-500'}`}>
-                          Qty: {item.quantity}
-                        </p>
-                      </div>
-
-                      <div className={`w-24 flex-shrink-0 flex sm:justify-center text-sm font-medium ${theme === 'light' ? 'text-gray-900' : 'text-gray-100'}`}>
+                      {/* Desktop Price */}
+                      <div className={`hidden sm:flex w-24 flex-shrink-0 justify-center text-sm font-medium ${theme === 'light' ? 'text-gray-900' : 'text-gray-100'}`}>
                         ₹{item.price.toLocaleString()}
                       </div>
 
-                      <div className="sm:w-72 flex-shrink-0 flex flex-col justify-start gap-1">
+                      {/* Status Section */}
+                      <div className={`w-full sm:w-72 flex-shrink-0 flex flex-col justify-start gap-1 pt-3 sm:pt-0 border-t sm:border-0 ${theme === 'light' ? 'border-gray-100' : 'border-white/10'}`}>
                         <div className="flex items-center gap-2">
                           <Circle size={10} className={`fill-current ${statusUI.dot.replace('bg-', 'text-')}`} />
                           <span className={`text-sm font-semibold ${theme === 'light' ? 'text-gray-900' : 'text-gray-100'}`}>
