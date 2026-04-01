@@ -19,6 +19,8 @@ interface NavbarProps {
 interface UserData {
   name?: string;
   email?: string;
+  role?: string;
+  isAdmin?: boolean;
 }
 
 const navLinks = [
@@ -204,7 +206,14 @@ export default function NavbarHome({ theme, toggleTheme }: NavbarProps) {
                           <p className={`text-sm font-medium ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>{userData?.name || 'User'}</p>
                           <p className={`text-xs truncate ${theme === 'light' ? 'text-gray-500' : 'text-gray-400'}`}>{userData?.email || ''}</p>
                         </div>
-                        <Link href="/profile" className={`flex items-center gap-3 px-4 py-2 text-sm transition-colors ${theme === 'light' ? 'text-gray-700 hover:bg-gray-100' : 'text-gray-300 hover:bg-white/10'}`} onClick={() => setIsProfileMenuOpen(false)}><User size={16} /><span>Profile</span></Link>
+                        
+                        {/* Admin Dashboard Link */}
+                        {(userData?.role === 'admin' || userData?.isAdmin) && (
+                          <Link href="https://wow-frontedn-y73e.vercel.app/admin/dashboard" className={`flex items-center gap-3 px-4 py-2 text-sm transition-colors ${theme === 'light' ? 'text-gray-700 hover:bg-gray-100' : 'text-gray-300 hover:bg-white/10'}`} onClick={() => setIsProfileMenuOpen(false)}>
+                            <User size={16} /><span>Admin Dashboard</span>
+                          </Link>
+                        )}
+                        
                         <Link href="/orders" className={`flex items-center gap-3 px-4 py-2 text-sm transition-colors ${theme === 'light' ? 'text-gray-700 hover:bg-gray-100' : 'text-gray-300 hover:bg-white/10'}`} onClick={() => setIsProfileMenuOpen(false)}><Package size={16} /><span>Orders</span></Link>
                         <button onClick={handleLogoutClick} className={`flex items-center gap-3 w-full text-left px-4 py-2 text-sm transition-colors ${theme === 'light' ? 'text-red-600 hover:bg-red-50' : 'text-red-400 hover:bg-red-500/10'}`}><LogOut size={16} /><span>Logout</span></button>
                       </motion.div>
@@ -236,6 +245,11 @@ export default function NavbarHome({ theme, toggleTheme }: NavbarProps) {
                 {navLinks.map((link) => (
                   <Link key={link.name} href={link.path} className={`block px-4 py-3 text-lg font-semibold rounded-lg transition-all ${pathname === link.path ? 'text-[#D4AF37] bg-[#D4AF37]/10' : theme === 'light' ? 'text-gray-800 hover:bg-gray-100' : 'text-gray-200 hover:bg-white/10'}`} onClick={() => setIsMobileMenuOpen(false)}>{link.name}</Link>
                 ))}
+                
+                {isLoggedIn && (userData?.role === 'admin' || userData?.isAdmin) && (
+                  <Link href="https://wow-frontedn-y73e.vercel.app/admin/dashboard" className={`block px-4 py-3 text-lg font-semibold rounded-lg transition-all ${theme === 'light' ? 'text-gray-800 hover:bg-gray-100' : 'text-gray-200 hover:bg-white/10'}`} onClick={() => setIsMobileMenuOpen(false)}>Admin Dashboard</Link>
+                )}
+                
                 {isLoggedIn && (
                   <Link href="/orders" className={`block px-4 py-3 text-lg font-semibold rounded-lg transition-all ${pathname === '/orders' ? 'text-[#D4AF37] bg-[#D4AF37]/10' : theme === 'light' ? 'text-gray-800 hover:bg-gray-100' : 'text-gray-200 hover:bg-white/10'}`} onClick={() => setIsMobileMenuOpen(false)}>My Orders</Link>
                 )}
