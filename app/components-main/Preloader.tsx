@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Define the interface for props
@@ -11,16 +11,23 @@ interface PreloaderProps {
 export default function Preloader({ onComplete }: PreloaderProps) {
   const [status, setStatus] = useState<'idle' | 'driving'>('idle');
 
-  const handleStart = () => {
-    setStatus('driving');
-  };
+  useEffect(() => {
+    // Automatically trigger the car animation after 1.5 seconds
+    // This gives the joystick 1 second to animate in, pauses for 0.5s, then drives the car
+    const timer = setTimeout(() => {
+      setStatus('driving');
+    }, 1500);
+
+    // Cleanup the timer if the component unmounts early
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <motion.div
       className="fixed inset-0 z-[9999] flex items-center justify-center bg-black overflow-hidden"
-      // Animation: Wait for car to pass (approx 1s), then fade out black background
+      // Animation: Wait for car to pass, then fade out black background
       animate={{ opacity: status === 'driving' ? [1, 1, 0] : 1 }} 
-      transition={{ duration: 1.8, times: [0, 0.7, 1], ease: "easeInOut" }}
+      transition={{ duration: 1.5, times: [0, 0.7, 1], ease: "easeInOut" }}
       onAnimationComplete={() => {
         if (status === 'driving') {
            onComplete(); // Unmount preloader -> Reveal Site
@@ -28,16 +35,14 @@ export default function Preloader({ onComplete }: PreloaderProps) {
       }}
     >
       
-      {/* --- CLICKABLE CONTENT (Logo) --- */}
+      {/* --- AUTOMATIC CONTENT (Logo / Joystick) --- */}
       <AnimatePresence>
         {status === 'idle' && (
           <motion.div 
-            className="relative cursor-pointer group z-20" // Added z-20 to ensure it's below the car
-            onClick={handleStart}
+            className="relative z-20" // Removed cursor-pointer and group since it's automatic now
             exit={{ opacity: 0, scale: 0.8, filter: "blur(10px)", transition: { duration: 0.3 } }}
           >
             {/* 1. THE IMAGE (Xbox Logo) */}
-            {/* FIXED: Reduced width on mobile (w-[200px]) to fit better */}
             <motion.img
               src="/xbox.png"
               alt="Logo"
@@ -46,42 +51,25 @@ export default function Preloader({ onComplete }: PreloaderProps) {
               transition={{ duration: 1, ease: "easeOut" }}
               // Breathing animation while waiting
               whileInView={{ scale: [1, 1.02, 1], transition: { duration: 3, repeat: Infinity } }}
-              // Hover Effect: Scale up slightly
-              whileHover={{ scale: 1.1, filter: "drop-shadow(0 0 20px rgba(212,175,55,0.3))" }}
               className="w-[200px] sm:w-[280px] md:w-[350px] object-contain transition-all duration-500"
             />
-
-            {/* 2. HOVER TEXT (Appears over image) */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <motion.span 
-                // FIXED: Adjusted text size for mobile
-                className="text-[#D4AF37] text-sm sm:text-xl md:text-2xl font-black tracking-[0.2em] uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300 drop-shadow-md bg-black/50 px-3 py-1.5 md:px-4 md:py-2 rounded-lg backdrop-blur-sm border border-[#D4AF37]/30 whitespace-nowrap"
-              >
-                Click to Start
-              </motion.span>
-            </div>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* --- THE CAR ANIMATION --- */}
       <motion.div
-        // CHANGED: positioned to the center horizontally (left-1/2) 
         className="absolute top-1/2 left-1/2 z-50 pointer-events-none"
-        
-        // CHANGED: Start way off-screen to the left, and already centered vertically (y: -50%)
+        // Start way off-screen to the left, and already centered vertically (y: -50%)
         initial={{ x: "-150vw", y: "-50%" }} 
-        
-        // CHANGED: Animate to x: -50% to perfectly align the center of the car with the center of the screen
+        // Animate to x: -50% to perfectly align the center of the car with the center of the screen
         animate={status === 'driving' ? { x: "-50%", y: "-50%" } : { x: "-150vw", y: "-50%" }} 
-        
         transition={{ 
-          duration: 1.2, // Speed of the car
+          duration: 0.8, // Sped up the car to make it come in fast
           ease: [0.22, 1, 0.36, 1], // "Fast in, slow out" motion - makes it brake nicely in the center
-          delay: 0.1 // Slight delay after click
+          delay: 0.1 // Slight delay after joystick disappears
         }}
       >
-        {/* FIXED: Made car responsive (w-[160vw] on mobile) so it looks big and impressive */}
         <img 
           src="/pngcar.png" 
           alt="Race Car" 
