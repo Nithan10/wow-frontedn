@@ -39,10 +39,11 @@ export default function Preloader({ onComplete }: PreloaderProps) {
       <AnimatePresence>
         {status === 'idle' && (
           <motion.div 
-            className="relative z-20" // Removed cursor-pointer and group since it's automatic now
+            className="relative z-20 w-full flex justify-center px-4" 
             exit={{ opacity: 0, scale: 0.8, filter: "blur(10px)", transition: { duration: 0.3 } }}
           >
             {/* 1. THE IMAGE (Xbox Logo) */}
+            {/* CHANGED: Added w-[50vw] to ensure it scales down smoothly on very small mobile screens */}
             <motion.img
               src="/xbox.png"
               alt="Logo"
@@ -51,7 +52,7 @@ export default function Preloader({ onComplete }: PreloaderProps) {
               transition={{ duration: 1, ease: "easeOut" }}
               // Breathing animation while waiting
               whileInView={{ scale: [1, 1.02, 1], transition: { duration: 3, repeat: Infinity } }}
-              className="w-[200px] sm:w-[280px] md:w-[350px] object-contain transition-all duration-500"
+              className="w-[50vw] max-w-[200px] sm:max-w-none sm:w-[280px] md:w-[350px] object-contain transition-all duration-500"
             />
           </motion.div>
         )}
@@ -60,20 +61,21 @@ export default function Preloader({ onComplete }: PreloaderProps) {
       {/* --- THE CAR ANIMATION --- */}
       <motion.div
         className="absolute top-1/2 left-1/2 z-50 pointer-events-none"
-        // Start way off-screen to the left, and already centered vertically (y: -50%)
-        initial={{ x: "-150vw", y: "-50%" }} 
+        // CHANGED: Pushed to -250vw. Because the car is so wide, -150vw wasn't far enough left to hide its right edge!
+        initial={{ x: "-250vw", y: "-50%" }} 
         // Animate to x: -50% to perfectly align the center of the car with the center of the screen
-        animate={status === 'driving' ? { x: "-50%", y: "-50%" } : { x: "-150vw", y: "-50%" }} 
+        animate={status === 'driving' ? { x: "-50%", y: "-50%" } : { x: "-250vw", y: "-50%" }} 
         transition={{ 
           duration: 0.8, // Sped up the car to make it come in fast
           ease: [0.22, 1, 0.36, 1], // "Fast in, slow out" motion - makes it brake nicely in the center
           delay: 0.1 // Slight delay after joystick disappears
         }}
       >
+        {/* CHANGED: Adjusted mobile width slightly to 140vw to prevent massive overflow rendering issues on iOS Safari */}
         <img 
           src="/pngcar.png" 
           alt="Race Car" 
-          className="w-[160vw] sm:w-[100vw] md:w-[900px] max-w-none h-auto drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
+          className="w-[140vw] sm:w-[100vw] md:w-[900px] max-w-none h-auto drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
         />
         
         {/* Speed lines/Motion Blur trail */}
