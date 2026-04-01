@@ -327,7 +327,8 @@ export default function ProductDetailPage() {
                     initial={{ opacity: 0, scale: 1.02 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
                     transition={{ duration: 0.22 }}
                     src={activeImage} alt={product.title}
-                    className={`absolute inset-0 w-full h-full object-cover pointer-events-none ${isOutOfStock ? 'opacity-50 grayscale' : ''}`}
+                    /* CHANGED: object-cover to object-contain so image does not cut off */
+                    className={`absolute inset-0 w-full h-full object-contain pointer-events-none ${isOutOfStock ? 'opacity-50 grayscale' : ''}`}
                   />
                 </AnimatePresence>
 
@@ -353,7 +354,8 @@ export default function ProductDetailPage() {
                       className={`flex-shrink-0 w-[68px] h-[68px] overflow-hidden rounded-lg transition-all duration-300 ${activeImage === img ? 'pdp-thumb-active' : ''}`}
                       style={{ border: `1px solid ${activeImage === img ? gold : border}`, background: surface2 }}
                     >
-                      <img src={img} className={`w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity p-1 ${isOutOfStock ? 'grayscale' : ''}`} alt={`Thumbnail ${idx + 1}`} />
+                      {/* CHANGED: object-cover to object-contain so thumbnails don't cut off */}
+                      <img src={img} className={`w-full h-full object-contain opacity-80 hover:opacity-100 transition-opacity p-1 ${isOutOfStock ? 'grayscale' : ''}`} alt={`Thumbnail ${idx + 1}`} />
                     </motion.button>
                   ))}
                 </div>
