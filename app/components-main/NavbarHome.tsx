@@ -171,14 +171,14 @@ export default function NavbarHome({ theme, toggleTheme }: NavbarProps) {
                 {isMobileMenuOpen ? <X size={26} /> : <Menu size={26} />}
               </button>
               <Link href="/" className="hidden lg:flex items-center gap-2 group">
-                <div className="relative w-9 h-9 rounded-full overflow-hidden border border-[#D4AF37]"><Image src="/wow-logo.png" alt="Logo" fill className="object-cover" /></div>
+                <div className="relative w-9 h-9 rounded-full overflow-hidden border border-[#D4AF37]"><Image src="https://res.cloudinary.com/duh5z2zjr/image/upload/v1776114446/wow-logo_rbinfx.jpg" alt="Logo" fill className="object-cover" /></div>
                 <span className={`text-xl font-bold tracking-wider whitespace-nowrap ${logoColor}`}>WOW <span className="text-[#D4AF37]">LIFESTYLE</span></span>
               </Link>
             </div>
 
             <div className="flex justify-center items-center">
               <Link href="/" className="lg:hidden flex items-center justify-center">
-                <div className="relative w-8 h-8 rounded-full overflow-hidden border border-[#D4AF37]"><Image src="/wow-logo.png" alt="Logo" fill className="object-cover" /></div>
+                <div className="relative w-8 h-8 rounded-full overflow-hidden border border-[#D4AF37]"><Image src="https://res.cloudinary.com/duh5z2zjr/image/upload/v1776114446/wow-logo_rbinfx.jpg" alt="Logo" fill className="object-cover" /></div>
               </Link>
               <div className="hidden lg:flex items-center space-x-8">
                 {navLinks.map((link) => (

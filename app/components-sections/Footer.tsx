@@ -47,7 +47,7 @@ const Footer = memo(({ theme }: { theme: 'dark' | 'light' }) => {
           className="relative will-change-transform"
         >
           <img 
-            src="/pngcar2.png" 
+            src="https://res.cloudinary.com/duh5z2zjr/image/upload/v1776114447/pngcar2_tsirwc.png" 
             alt="F1 Car" 
             loading="lazy"
             className="w-full h-auto drop-shadow-[0_15px_30px_rgba(0,0,0,0.6)] md:drop-shadow-[0_25px_50px_rgba(0,0,0,0.6)]" 
@@ -62,7 +62,7 @@ const Footer = memo(({ theme }: { theme: 'dark' | 'light' }) => {
             <div className="flex items-center gap-3 mb-4 md:mb-6">
               <div className="w-10 h-10 md:w-12 md:h-12 relative rounded-full overflow-hidden border border-[#D4AF37]/50 shadow-[0_0_10px_rgba(212,175,55,0.3)] md:shadow-[0_0_15px_rgba(212,175,55,0.3)]">
                 <img 
-                  src="/wow-logo.png" 
+                  src="https://res.cloudinary.com/duh5z2zjr/image/upload/v1776114446/wow-logo_rbinfx.jpg" 
                   alt="WOW Lifestyle Logo" 
                   className="w-full h-full object-cover"
                 />

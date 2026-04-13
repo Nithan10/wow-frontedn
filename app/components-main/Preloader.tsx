@@ -45,7 +45,7 @@ export default function Preloader({ onComplete }: PreloaderProps) {
             {/* 1. THE IMAGE (Xbox Logo) */}
             {/* CHANGED: Added w-[50vw] to ensure it scales down smoothly on very small mobile screens */}
             <motion.img
-              src="/xbox.png"
+              src="https://res.cloudinary.com/duh5z2zjr/image/upload/v1776114448/xbox_felmbp.png"
               alt="Logo"
               initial={{ opacity: 0, scale: 0.8, filter: 'blur(15px)' }}
               animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
@@ -73,7 +73,7 @@ export default function Preloader({ onComplete }: PreloaderProps) {
       >
         {/* CHANGED: Adjusted mobile width slightly to 140vw to prevent massive overflow rendering issues on iOS Safari */}
         <img 
-          src="/pngcar.png" 
+          src="https://res.cloudinary.com/duh5z2zjr/image/upload/v1776114447/pngcar_jlspoi.png" 
           alt="Race Car" 
           className="w-[140vw] sm:w-[100vw] md:w-[900px] max-w-none h-auto drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
         />
